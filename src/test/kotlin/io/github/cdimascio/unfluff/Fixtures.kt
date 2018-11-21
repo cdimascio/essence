@@ -433,7 +433,7 @@ val htmlExample = """
       <p class="cite-this-article"><a href="#" id="cite-this-article">Cite This Article</a></p>
 
 <ul class="inline-facts"><li><strong>What</strong>: Prestigious national high-school science contest</li><li><strong>Where</strong>: Washington, D.C.</li><li><strong>When</strong>: Every March</li></ul><p>The Intel Science Talent Search (STS) is the top high-school science contest in the United States. This annual competition seeks to encourage talented students to pursue careers in science, mathematics, engineering, and medicine. The level of independent research submitted by these promising young minds is amazing. Entries often delve into exciting areas of scientific research—ranging from an in-depth study of pollution in a Utah river to an experiment determining the behavior of dust particles on Mars. It's no wonder that the STS has earned the nickname of "the junior Nobel Prize."</p><p>Each year, more than 1,500 students from across America submit entries that include a paper describing their research project, as well as a lengthy entry form demonstrating their overall achievement in science or math. Many competitors spend years on their projects, often with the encouragement and guidanceof teachers. From the field of hopefuls, 300 semifinalists are chosen. Each of them receives a ${'$'}1,000 prize along with another ${'$'}1,000 to be used for science or math education in their high school. Then in March, 40 finalists travel to Washington, D.C., where they present their projects to eminent judges, visiting scientists, political dignitaries, and their peers. The top 10 finalists receive scholarships starting at ${'$'}20,000, with the winner receiving ${'$'}100,000. </p><p>The STS began in 1942 as the brainchild of Watson Davis, a director of the Science Service—which still administers the contest—and G. Edward Pendray, a Westinghouse executive who had his company provide the funding. The contest was often called "The Westinghouse," until sponsorship duties were taken over by Intel in 1998. Intel increased the scholarship amounts significantly, but it is the quality of the students that makes this competition so notable. Former finalists have gone on to collect six Nobel Prizes, two Fields Medals, three National Medals of Science, and 10 MacArthur Fellowships, and have contributed immeasurably to the practice and study of all branches of science and mathematics. </p>
-
+  <p><span>hey there</span></p>
       <div class="component--citations" id="citations">
 
   <h2>How to cite this article:</h2>
@@ -566,6 +566,7 @@ val htmlExample = """
       </li>
 
   </ul>
+
 </div>
 
                 </div>
