@@ -9,8 +9,9 @@ class UnfluffSpec {
     fun cleanDoc() {
         val html = htmlExample
         val language = Language.en
-        val pdoc = UnfluffParser(html, language).cleanedDoc()
-        println(pdoc.text)
-        assertEquals("Intel Science Talent Search", pdoc.text)
+//        val pdoc = UnfluffParser(html, language).cleanedDoc()
+        val pdoc = UnfluffParser(html, language).parsedDoc()
+        println(pdoc)
+        assertEquals("Intel Science Talent Search", pdoc.title)
     }
 }
