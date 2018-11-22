@@ -99,6 +99,62 @@ class CleanerSpec {
         assertEquals(0, doc.select("u").size)
         assertEquals("text1", doc.body().html())
     }
+
+    @Test
+    fun removesDivsByRegExCaption() {
+        val contents = readFileFull("./fixtures/test_aolNews.html")
+        val doc = Jsoup.parse(contents)
+
+        assertEquals(1, doc.select("div.caption").size)
+
+        Cleaner(doc, Language.en).clean()
+
+        assertEquals(0, doc.select("div.caption").size)
+    }
+
+    @Test
+    fun removeNaughtElmsByRegex() {
+        val contents = readFileFull("./fixtures/test_issue28.html")
+        val doc = Jsoup.parse(contents)
+
+        val naughtyElmsOrig = doc.select(".retweet")
+        assertEquals(2, naughtyElmsOrig.size)
+
+        Cleaner(doc, Language.en).clean()
+
+        val naughtyElms = doc.select(".retweet")
+        assertEquals(0, naughtyElms.size)
+    }
+
+    @Test
+    fun removeTrashLineBreaksThatWouldntBeRenderedByTheBrowser() {
+        val contents = readFileFull("./fixtures/test_sec1.html")
+        val doc = Jsoup.parse(contents)
+
+        Cleaner(doc, Language.en).clean()
+
+        val pElements = doc.select("p")
+        println(pElements)
+        val cleanedParaText = pElements[9].textNodes()[0].text()
+        assertEquals("“This transaction would not only strengthen our global presence, but also demonstrate our commitment to diversify and expand our U.S. commercial portfolio with meaningful new therapies,” said Russell Cox, executive vice president and chief operating officer of Jazz Pharmaceuticals plc. “We look forward to ongoing discussions with the FDA as we continue our efforts toward submission of an NDA for defibrotide in the U.S. Patients in the U.S. with severe VOD have a critical unmet medical need, and we believe that defibrotide has the potential to become an important treatment option for these patients.”", cleanedParaText.trim())
+    }
+
+    @Test
+    fun inlinesCodeBlocksAsText() {
+        val contents = readFileFull("./fixtures/test_github1.html")
+        val doc = Jsoup.parse(contents)
+
+        val codeBlocksOrig = doc.select("code")
+        assertEquals(26, codeBlocksOrig.size)
+
+        Cleaner(doc, Language.en).clean()
+
+        val codeBlocks = doc.select("code")
+        assertEquals(0, codeBlocks.size)
+
+        // This is a code block that should still be present in the doc after cleaning
+        assertTrue(doc.body().text().indexOf("extractor = require('unfluff');") > 0)
+    }
 }
 
 fun traverse(node: Node, visit: (Node) -> Unit) {
