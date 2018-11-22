@@ -84,7 +84,7 @@ class Cleaner(private val doc: Document, private val language: Language) {
             "[class*='highlight-'], pre code, code, pre, ul.task-list"
         )
         nodes.forEach {
-            it.replaceWith(htmlToElement(it.html()))
+            it.replaceWith(htmlToElement(it.text()))
         }
     }
 
