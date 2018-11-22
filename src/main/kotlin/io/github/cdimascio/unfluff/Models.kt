@@ -1,5 +1,7 @@
 package io.github.cdimascio.unfluff
 
+import org.jsoup.nodes.Document
+
 enum class Language {
     en
 }
@@ -11,7 +13,8 @@ interface IDocument {
 
 data class CleanDocument(
     override val text: String?,
-    override val language: Language
+    override val language: Language,
+    val doc: Document
 ): IDocument
 
 data class FluffDocument(
@@ -29,3 +32,8 @@ data class UnfluffDocument(
     val publisher: String?
 
 ): IDocument
+
+data class StopWordsStatistics(
+    val wordCount: Int,
+    val stopWords: List<String>
+)

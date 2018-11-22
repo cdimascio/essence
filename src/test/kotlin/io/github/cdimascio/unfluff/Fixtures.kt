@@ -1,5 +1,18 @@
 package io.github.cdimascio.unfluff
 
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.util.stream.Collectors
+
+fun readFileFull(path: String): String {
+    val lines = readFileLines(path)
+    return lines.joinToString(" ")
+}
+fun readFileLines(path: String): List<String> {
+    val resource = ClassLoader.getSystemResource(path).toURI()
+    return Files.lines(Paths.get(resource)).collect(Collectors.toList())
+}
+
 val htmlExample = """
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en-US" xmlns="http://www.w3.org/1999/xhtml">

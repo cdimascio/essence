@@ -8,9 +8,10 @@ class UnfluffParser(private val html: String, private val language: Language = L
     private val extractor: Extractor
     private val cleaner = Cleaner(document, this.language)
     init {
+        // 1. Clean document
         val cleanedDoc = Jsoup.parse(cleaner.clean().text)
+        // 2. Find top node
         extractor = Extractor(cleanedDoc, this.language)
-
 
     }
 
