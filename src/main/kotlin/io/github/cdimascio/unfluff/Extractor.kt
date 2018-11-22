@@ -128,11 +128,11 @@ class Extractor(private val doc: Document, private val language: Language = Lang
     }
 
     fun title(): String? {
-        return cleanTitle(rawTitle(), listOf("|", " - ", ">>"))
+        return cleanTitle(rawTitle(), listOf("|", " - ", ">>", ":"))
     }
 
-    fun softTitle() {
-
+    fun softTitle(): String? {
+        return cleanTitle(rawTitle(), listOf("|", " - ", "»"))
     }
 
     fun text(): String {
@@ -254,7 +254,9 @@ class PostCleanup(private val doc: Document, private val topNode: Element?, priv
                     if (heuristics.hasHighLinkDensity(child) ||
                         heuristics.isTableOrListWithNoParagraphs(child) ||
                         !heuristics.isNodeThresholdMet(updatedElement, child)) {
-                        child.remove()
+                        if (child.hasParent()) {
+                            child.remove()
+                        }
                     }
                 }
             }
