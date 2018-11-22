@@ -131,7 +131,7 @@ class Cleaner(private val doc: Document, private val language: Language) {
         if (!cleanHtml.startsWith("<")) {
             return TextNode(html)
         }
-        val (tag) = """^<(.*)>""".toRegex().find(cleanHtml)?.destructured ?: throw IllegalArgumentException("bad html. element detected, but not element")
+        val (tag) = """^<(.*?)>""".toRegex().find(cleanHtml)?.destructured ?: throw IllegalArgumentException("bad html. element detected, but not element")
         val element = Jsoup.parse(cleanHtml, "", Parser.xmlParser())
         element.tagName(tag)
         return element
