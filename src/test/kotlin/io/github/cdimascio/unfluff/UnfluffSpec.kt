@@ -11,8 +11,14 @@ class UnfluffSpec {
         val language = Language.en
         val cleaned = UnfluffParser(html, language).cleanedDoc()
         println(cleaned)
-//        val pdoc = UnfluffParser(html, language).parsedDoc()
-//        println(pdoc)
-//        assertEquals("Intel Science Talent Search", pdoc.title)
+        val pdoc = UnfluffParser(html, language).parsedDoc()
+        println()
+        println()
+        println()
+        println()
+        println()
+        println(pdoc.text)
+        println()
+        assertEquals("Intel Science Talent Search", pdoc.title)
     }
 }

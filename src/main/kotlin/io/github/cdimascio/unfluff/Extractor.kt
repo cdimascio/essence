@@ -12,6 +12,7 @@ class Extractor(private val doc: Document, private val language: Language = Lang
     private val extractorHeuristics = ExtractorHeuristics(doc, stopWords)
     private val topNode = extractorHeuristics.calculateBestNode()
     private val formatter = Formatter(doc, language, stopWords)
+
     init {
     }
 
@@ -100,13 +101,15 @@ class Extractor(private val doc: Document, private val language: Language = Lang
         }
 
         if (authors.isEmpty()) {
-            var fallback = doc.select("span[class*='author']")
-            if (fallback.isEmpty()) fallback = doc.select("p[class*='author']")
-            if (fallback.isEmpty()) fallback = doc.select("div[class*='author']")
-            if (fallback.isEmpty()) fallback = doc.select("span[class*='byline']")
-            if (fallback.isEmpty()) fallback = doc.select("p[class*='byline']")
-            if (fallback.isEmpty()) fallback = doc.select("div[class*='byline']")
-            if (fallback.isNotEmpty()) authors.add(fallback.text().cleanse())
+            val fallback: Element? = doc.selectFirst("span[class*='author']")
+                ?: doc.selectFirst("p[class*='author']")
+                ?: doc.selectFirst("div[class*='author']")
+                ?: doc.selectFirst("span[class*='byline']")
+                ?: doc.selectFirst("p[class*='byline']")
+                ?: doc.selectFirst("div[class*='byline']")
+            fallback?.let {
+                authors.add(fallback.text().cleanse())
+            }
         }
         return authors
     }
@@ -141,13 +144,22 @@ class Extractor(private val doc: Document, private val language: Language = Lang
 
     private fun rawTitle(): String? {
 
-        var candidates = mutableListOf<Element>()
+        val candidates = mutableListOf<Element>()
         candidates.addAll(doc.select("""meta[property='og:title']""").toList())
-        candidates.add(doc.selectFirst("h1[class*='title']"))
-        candidates.add(doc.selectFirst("title"))
+
+        doc.selectFirst("h1[class*='title']")?.let {
+            candidates.add(it)
+        }
+        doc.selectFirst("title")?.let {
+            candidates.add(it)
+        }
         // The first h1 or h2 is a useful fallback
-        candidates.add(doc.selectFirst("h1"))
-        candidates.add(doc.selectFirst("h2"))
+        doc.selectFirst("h1")?.let {
+            candidates.add(it)
+        }
+        doc.selectFirst("h2")?.let {
+            candidates.add(it)
+        }
 
         var text: String? = null
         for (c in candidates) {
@@ -255,7 +267,7 @@ class PostCleanup(private val doc: Document, private val topNode: Element?, priv
         if (targetNode == null) return null
 
         val previousSiblings = TraversalHelpers.getAllPreviousSiblings(targetNode)
-        previousSiblings.filter{ it is Element }.forEach { sib: Node ->
+        previousSiblings.filter { it is Element }.forEach { sib: Node ->
             val siblingContent = getSiblingsContent(sib as Element, baselineParagraphSiblingScore)
             for (content in siblingContent) {
                 if (content.isNotBlank()) {
