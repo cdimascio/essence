@@ -91,6 +91,16 @@ class CleanerSpec {
     }
 
     @Test
+    fun replaceChildlessDivsWithPTags2() {
+        val doc = Jsoup.parse("<html><body><div>text1</div><div>more text</div></body></html>")
+        Cleaner(doc, Language.en).clean()
+        println(doc.html())
+        assertEquals(0, doc.select("div").size)
+        assertEquals(2, doc.select("p").size)
+        assertEquals("text1 more text", doc.select("p").text())
+    }
+
+    @Test
     fun replacesUTagsWithPlainText() {
         val doc = Jsoup.parse("<html><body><u>text1</u></body></html>")
         Cleaner(doc, Language.en).clean()

@@ -1,13 +1,11 @@
 package io.github.cdimascio.unfluff
 
-import com.sun.tools.javac.tree.JCTree
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
 import org.jsoup.parser.Parser
-import org.jsoup.parser.Tag
 
 val REGEX_BAD_TAGS = """^side$|combx|retweet|mediaarticlerelated|menucontainer|navbar|partner-gravity-ad|video-full-transcript|storytopbar-bucket|utility-bar|inline-share-tools|comment|PopularQuestions|contact|foot|footer|Footer|footnote|cnn_strycaptiontxt|cnn_html_slideshow|cnn_strylftcntnt|links|meta$|shoutbox|sponsor|tags|socialnetworking|socialNetworking|cnnStryHghLght|cnn_stryspcvbx|^inset$|pagetools|post-attributes|welcome_form|contentTools2|the_answers|communitypromo|runaroundLeft|subscribe|vcard|articleheadings|date|^print$|popup|author-dropdown|tools|socialtools|byline|konafilter|KonaFilter|breadcrumbs|^fn$|wp-caption-text|legende|ajoutVideo|timestamp|js_replies""".toRegex(RegexOption.IGNORE_CASE)
 
@@ -146,12 +144,21 @@ class Cleaner(private val doc: Document, private val language: Language) {
                 element.replaceWith(htmlToElement("<p>${element.html()}</p>"))
             } else {
                 val replacementNodes = ReplacementNodes().find(element)
-                val html = replacementNodes.fold("") { html, nodeHtml ->
-                    if (nodeHtml.isNotBlank()) {
-                        "$html <p>$nodeHtml</p>"
-                    } else html
+                replacementNodes.forEach {n ->
+                    if (n is Element) {
+                        n.tagName("p")
+                    }
                 }
-                element.replaceWith(htmlToElement(html))
+                element.tagName("p")
+//                val html = replacementNodes.fold("") { html, nodeHtml ->
+//                    if (nodeHtml.isNotBlank()) {
+//                        "$html <p>$nodeHtml</p>"
+//                    } else html
+//                }
+
+//                val e =htmlToElement(html) as Element
+//                element.tagName("p").html(e.html())
+//                element.replaceWith(htmlToElement(html))
             }
         }
     }
@@ -238,30 +245,30 @@ object TraversalRules {
 class ReplacementNodes {
     private val replacementText = mutableListOf<String>()
     //    val nodesToReturn = mutableListOf<Node>()
-    private val nodesToReturn = mutableListOf<String>()
+    private val nodesToReturn = mutableListOf<Node>()
     private val nodesToRemove = mutableListOf<Node>()
 
-    fun find(div: Element): List<String> {
+    fun find(div: Element): List<Node> {
         for (child in div.childNodes()) {
             when (child) {
                 is Element -> {
                     if (child.tagName() == "p" && replacementText.isNotEmpty()) {
                         val text = replacementText.joinToString("")
                         if (text.isNotBlank()) {
-                            nodesToReturn.add(text)
+                            nodesToReturn.add(TextNode(text))
                         }
                         replacementText.clear()
                         val html = child.html()
-                        nodesToReturn.add(html)
-//                        if (html.isNotBlank()) {
-//                            nodesToReturn.addAll(child.childNodes())
-//                        }
+//                        nodesToReturn.add(html)
+                        if (html.isNotBlank()) {
+                            nodesToReturn.addAll(child.childNodes())
+                        }
                     } else {
                         val html = child.html()
-                        nodesToReturn.add(html)
-//                        if (html.isNotBlank()) {
-//                            nodesToReturn.addAll(child.childNodes())
-//                        }
+//                        nodesToReturn.add(html)
+                        if (html.isNotBlank()) {
+                            nodesToReturn.addAll(child.childNodes())
+                        }
                     }
 
                 }
@@ -311,7 +318,7 @@ class ReplacementNodes {
         if (replacementText.isNotEmpty()) {
             val text = replacementText.joinToString("")
             if (text.isNotBlank()) {
-                nodesToReturn.add(text)
+                nodesToReturn.add(TextNode(text))
             }
         }
 
