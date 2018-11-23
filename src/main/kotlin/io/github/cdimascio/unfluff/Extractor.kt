@@ -179,6 +179,7 @@ class Extractor(private val doc: Document, private val language: Language = Lang
         for (d in delimiters) {
             if (t.contains(d)) {
                 t = biggestTitleChunk(t, d)
+                break
             }
         }
         return t.cleanse()

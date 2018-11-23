@@ -23,10 +23,6 @@ class FormatterSpec {
 
     @Test
     fun doesNotDropTextNodesAccidentally() {
-
-//        html = doc.html()
-//        # This text was getting dropped by the formatter
-//            ok /is a thirteen episode anime series directed by Akitaro Daichi and written by Hideyuki Kurata/.test(html)
         val contents = readFileFull("./fixtures/test_wikipedia1.html")
         val doc = Jsoup.parse(contents)
 
