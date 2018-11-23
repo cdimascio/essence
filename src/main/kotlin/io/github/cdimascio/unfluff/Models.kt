@@ -27,9 +27,13 @@ data class UnfluffDocument(
     override val language: Language,
     val authors: List<String>,
     val title: String?,
+    val softTitle: String?,
     val copyright: String?,
     val date: String?,
-    val publisher: String?
+    val publisher: String?,
+    val description: String?,
+    val favicon: String?,
+    val image: String?
 
 ): IDocument
 

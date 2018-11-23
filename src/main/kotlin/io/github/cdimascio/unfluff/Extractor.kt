@@ -285,7 +285,6 @@ class PostCleanup(private val doc: Document, private val topNode: Element?, priv
                 }
             }
         }
-        //return uElement
     }
 
     private fun addSiblingsToTopNode(targetNode: Element?): Element? {
@@ -297,7 +296,7 @@ class PostCleanup(private val doc: Document, private val topNode: Element?, priv
             val siblingContent = getSiblingsContent(sib as Element, baselineParagraphSiblingScore)
             for (content in siblingContent) {
                 if (content.isNotBlank()) {
-                    targetNode.prependChild(Element("<p>$siblingContent</p>"))
+                    targetNode.prependChild(TextNode(content))
                 }
             }
         }

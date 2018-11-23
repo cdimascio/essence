@@ -33,14 +33,8 @@ class Formatter(private val doc: Document, val language: Language, private val s
     private fun linksToText(node: Element) {
         val nodes = node.select("a")
         nodes.forEach {
-            val parent = it.parent()
-//            println(parent.html())
             it.unwrap()
-//            println(parent.html())
-//            println()
-//            it.replaceWith(Element(it.html()))
         }
-        println()
     }
 
     private fun addNewlineToBr(node: Element) {
@@ -55,7 +49,6 @@ class Formatter(private val doc: Document, val language: Language, private val s
         nodes.forEach {
             if (it.text().isNotBlank()) {
                 it.unwrap()
-//                it.replaceWith(TextNode(it.text()))
             }
         }
     }

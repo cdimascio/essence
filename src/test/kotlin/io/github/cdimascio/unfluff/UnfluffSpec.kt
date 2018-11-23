@@ -1,8 +1,9 @@
 package io.github.cdimascio.unfluff
 
-import org.jsoup.Jsoup
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.test.assertNotEquals
 
 class UnfluffSpec {
 
@@ -11,12 +12,11 @@ class UnfluffSpec {
         checkFixture(site = "polygon", fields = listOf("cleaned_text", "title", "link", "description", "lang", "favicon"))
     }
 
-    private fun cleanTestingTest(text: String): String {
-        val textLen = text.length
-        return text.
+    private fun cleanTestingTest(newText: String, originalText: String): String {
+        return newText.
             replace("""\n\n""", " ").
             replace("""\ \ """, " ")
-            .substring(textLen, textLen-1)
+            .substring(0, Math.min(newText.length, originalText.length))
     }
 
     private fun cleanOrigText(text: String): String {
@@ -26,13 +26,21 @@ class UnfluffSpec {
     fun checkFixture(site: String, fields: List<String>) {
         val html = readFileFull("./fixtures/test_$site.html")
         val orig = parseJson(readFileFull("./fixtures/test_$site.json"))
-        val doc = Jsoup.parse(html)
-        val data = Extractor(doc)
+//        val origDoc = Jsoup.parse(html)
+        val data = Unfluff.parse(html, Language.en)
 
         for (field in fields) {
             when (field) {
                 "title" -> {
-                    assertEquals(orig["expected"]["title"].asText(), data.title())
+                    assertEquals(orig["expected"]["title"].asText(), data.title ?: "")
+                }
+                "cleaned_text" -> {
+                    val origText = orig["expected"]["cleaned_text"].asText()
+                    val newText = cleanTestingTest(data.text ?: "", origText)
+                    assertNotEquals("", newText)
+                    assertTrue(data.text?.length ?: 0 >= origText.length)
+                    assertEquals(origText, newText)
+
                 }
             }
         }

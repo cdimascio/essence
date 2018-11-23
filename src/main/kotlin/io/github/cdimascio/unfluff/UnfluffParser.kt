@@ -1,36 +1,57 @@
 package io.github.cdimascio.unfluff
 
 import org.jsoup.Jsoup
-import javax.swing.text.Document
 
 class UnfluffParser(private val html: String, private val language: Language = Language.en) {
     private val document = Jsoup.parse(this.html)
-    private val extractor: Extractor
+
     private val cleaner = Cleaner(document, this.language)
     init {
-        // 1. Clean document
-        val cleanedDoc = Jsoup.parse(cleaner.clean().text)
-        // 2. Find top node
-        extractor = Extractor(cleanedDoc, this.language)
 
     }
 
+    fun parse(): UnfluffDocument {
+        val e = Extractor(document, this.language)
+        val title = e.title()
+        val softTitle = e.softTitle()
+        val desription = e.description()
+        val authors = e.authors()
+        val copyright = e.copyright()
+        val date = e.date()
+        val favicon = e.favicon()
+        val publisher = e.publisher()
+        val image = e.image()
+        val tags = e.tags()
+        val canonicalLink = e.canonicalLink()
+        val lang = e.lang()
+        val keywords = e.keywords()
 
+        Cleaner(document, this.language).clean()
 
-    fun parsedDoc(): UnfluffDocument {
+        val links = e.links()
+        val videos = e.videos()
+        val text = e.text()
+
         return UnfluffDocument(
-            text = extractor.text(),
-            title = extractor.title(),
+            authors = authors,
+            title = title,
+            softTitle = softTitle,
+            description = desription,
+            publisher = publisher,
+            date = date,
+            copyright = copyright,
             language = language,
-            authors = extractor.authors(),
-            copyright = extractor.copyright(),
-            publisher = extractor.publisher(),
-            date = extractor.date()
+            text = text,
+            favicon = favicon,
+            image = image
+
+
         )
     }
 
+
     fun topNode() {
-//        Extractor
+
     }
 
     fun cleanedDoc(): CleanDocument {
