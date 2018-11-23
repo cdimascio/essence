@@ -61,8 +61,8 @@ class Extractor(private val doc: Document, private val language: Language = Lang
         return null
     }
 
-    fun copyright(): String? {
-        val candidates = doc.select("""
+    fun copyright(): String {
+        val candidate: Element? = doc.selectFirst("""
             p[class*='copyright'],
             div[class*='copyright'],
             span[class*='copyright'],
@@ -72,12 +72,16 @@ class Extractor(private val doc: Document, private val language: Language = Lang
             span[id*='copyright'],
             li[id*='copyright']
             """.trimIndent())
-        for (c in candidates) {
-            val text = c.text()
-            if (text.isNotBlank()) return text
+        var text = candidate?.text() ?: ""
+        if (text.isBlank()) {
+            val bodyText = doc.body().text().replace("""s*[\r\n]+\s*""".toRegex(), ". ")
+            if (bodyText.contains("©")) {
+                text = bodyText
+            }
         }
-        val match = REGEX_COPYRIGHT.find(doc.body().html())
-        return match?.groupValues?.get(2)?.cleanse()
+        val match = REGEX_COPYRIGHT.find(text)
+        val copyright = match?.groupValues?.get(2) ?: ""
+        return copyright.cleanse()
     }
 
 
@@ -194,8 +198,14 @@ class Extractor(private val doc: Document, private val language: Language = Lang
         return largestPart
     }
 
-    fun favicon() {
-
+    fun favicon(): String {
+        val favicon = doc.select("link").filter{
+            it.attr("rel").toLowerCase() == "shortcut icon"
+        }
+        if (favicon.isNotEmpty()) {
+            return favicon[0].attr("href")
+        }
+        return ""
     }
 
     fun description() {
@@ -218,8 +228,16 @@ class Extractor(private val doc: Document, private val language: Language = Lang
 
     }
 
-    fun image() {
-
+    fun image(): String? {
+        val candidate: Element? = doc.selectFirst("""
+            meta[property='og:image'],
+            meta[property='og:image:url'],
+            meta[itemprop=image],
+            meta[name='twitter:image:src'],
+            meta[name='twitter:image'],
+            meta[name='twitter:image0']
+        """.trimIndent())
+        return candidate?.attr("content")?.cleanse()
     }
 
     fun videos() {
