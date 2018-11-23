@@ -6,7 +6,16 @@ import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
 
 class Formatter(private val doc: Document, val language: Language, private val stopWords: StopWords) {
-    fun removeNegativescoresNodes(node: Element) {
+    fun format(node: Element): String {
+        removeNegativescoresNodes(node)
+        linksToText(node)
+        addNewlineToBr( node)
+        replaceWithText(node)
+        removeFewwordsParagraphs(node)
+        return convertToText(node)
+    }
+
+    private fun removeNegativescoresNodes(node: Element) {
         val gravityElements = node.select("*[gravityScore]")
         gravityElements.forEach {
             val score = try {
@@ -21,30 +30,37 @@ class Formatter(private val doc: Document, val language: Language, private val s
         }
     }
 
-    fun linksToText(node: Element) {
+    private fun linksToText(node: Element) {
         val nodes = node.select("a")
         nodes.forEach {
-            it.replaceWith(Element(it.html()))
+            val parent = it.parent()
+//            println(parent.html())
+            it.unwrap()
+//            println(parent.html())
+//            println()
+//            it.replaceWith(Element(it.html()))
         }
+        println()
     }
 
-    fun addNewlineToBr(node: Element) {
+    private fun addNewlineToBr(node: Element) {
         val brs = node.select("br")
         brs.forEach {
             it.replaceWith(TextNode("\n\n"))
         }
     }
 
-    fun replaceWithText(node: Element) {
+    private fun replaceWithText(node: Element) {
         val nodes = node.select("b, strong, i, br, sup")
         nodes.forEach {
             if (it.text().isNotBlank()) {
-                it.replaceWith(TextNode(it.text()))
+                it.unwrap()
+//                it.replaceWith(TextNode(it.text()))
             }
         }
     }
 
-    fun removeFewwordsParagraphs(node: Element) {
+    private fun removeFewwordsParagraphs(node: Element) {
         val elements = node.select("*")
         for (e in elements) {
             val tag = e.tagName()
@@ -54,19 +70,21 @@ class Formatter(private val doc: Document, val language: Language, private val s
             val hasEmbed = e.select("embed").isNotEmpty()
             if ((tag != "br" || text != "\\r") && numStopWords < 3 && !hasObject && !hasEmbed) {
                 println("removing $e (small paragraph 1)")
-                e.remove()
+                if (e.parent() != null)
+                    e.remove()
             } else {
                 val trimmed = text.trim()
                 val numWords = text.split(" ").size
                 if (trimmed.isNotBlank() && numWords < 8 && trimmed.first() == '(' && trimmed.last() == ')') {
                     println("removing $e (small paragraph 2)")
-                    e.remove()
+                    if (e.parent() != null)
+                        e.remove()
                 }
             }
         }
     }
 
-    fun convertToText(node: Node): String {
+    private fun convertToText(node: Node): String {
         // To hold any text fragments that end up in text nodes outside of
         // html elements
         val texts = mutableListOf<String>()

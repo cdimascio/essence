@@ -142,7 +142,7 @@ class Extractor(private val doc: Document, private val language: Language = Lang
     fun text(): String {
         return topNode?.let {
             PostCleanup(doc, topNode, language, stopWords, extractorHeuristics).clean(topNode)
-            formatter.convertToText(topNode)
+            formatter.format(topNode)
         } ?: ""
     }
 
@@ -208,8 +208,13 @@ class Extractor(private val doc: Document, private val language: Language = Lang
         return ""
     }
 
-    fun description() {
-
+    fun description(): String {
+        return doc.selectFirst("""
+            meta[name=description],
+            meta[property='og:description']
+            """.trimIndent())?.
+            attr("content")?.
+            cleanse() ?: ""
     }
 
     fun keywords() {

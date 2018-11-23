@@ -71,8 +71,8 @@ class Cleaner(private val doc: Document, private val language: Language) {
         ems.forEach {
             val images = ems.select("img")
             if (images.isEmpty()) {
-
-                it.replaceWith(htmlToElement(it.html()))
+                it.unwrap()
+//                it.replaceWith(htmlToElement(it.html()))
             }
         }
     }
@@ -82,14 +82,16 @@ class Cleaner(private val doc: Document, private val language: Language) {
             "[class*='highlight-'], pre code, code, pre, ul.task-list"
         )
         nodes.forEach {
-            it.replaceWith(htmlToElement(it.text()))
+            it.unwrap()
+//            it.replaceWith(htmlToElement(it.text()))
         }
     }
 
     private fun removeDropCaps() {
         val nodes = d.select("span[class~=dropcap], span[class~=drop_cap]")
         return nodes.forEach {
-            it.replaceWith(htmlToElement(it.html()))
+            it.unwrap()
+//            it.replaceWith(htmlToElement(it.html()))
         }
     }
 
@@ -100,13 +102,15 @@ class Cleaner(private val doc: Document, private val language: Language) {
 
     private fun cleanParaSpans() {
         d.select("p span").forEach {
-            it.replaceWith(htmlToElement(it.html()))
+            it.unwrap()
+//            it.replaceWith(htmlToElement(it.html()))
         }
     }
 
     private fun cleanUnderlines() {
         d.select("u").forEach {
-            it.replaceWith(htmlToElement(it.html()))
+            it.unwrap()
+//            it.replaceWith(htmlToElement(it.html()))
         }
     }
 
@@ -121,19 +125,19 @@ class Cleaner(private val doc: Document, private val language: Language) {
         return element
     }
 
-    private fun htmlToElement(html: String): Node {
-        // xml parser may break certain features
-        // htmlParser adds the html body tags
-        val cleanHtml = html.trim()
-        // TODO will this fail if a code block or something started with a '<'
-        if (!cleanHtml.startsWith("<")) {
-            return TextNode(html)
-        }
-        val (tag) = """^<(.*?)>""".toRegex().find(cleanHtml)?.destructured ?: throw IllegalArgumentException("bad html. element detected, but not element")
-        val element = Jsoup.parse(cleanHtml, "", Parser.xmlParser())
-        element.tagName(tag)
-        return element
-    }
+//    private fun htmlToElement(html: String): Node {
+//        // xml parser may break certain features
+//        // htmlParser adds the html body tags
+//        val cleanHtml = html.trim()
+//        // TODO will this fail if a code block or something started with a '<'
+//        if (!cleanHtml.startsWith("<")) {
+//            return TextNode(html)
+//        }
+//        val (tag) = """^<(.*?)>""".toRegex().find(cleanHtml)?.destructured ?: throw IllegalArgumentException("bad html. element detected, but not element")
+//        val element = Jsoup.parse(cleanHtml, "", Parser.xmlParser())
+//        element.tagName(tag)
+//        return element
+//    }
 
     private fun elementToParagraph(doc: Document, tagName: String) {
         val elements = doc.select(tagName)
@@ -141,7 +145,13 @@ class Cleaner(private val doc: Document, private val language: Language) {
         for (element in elements) {
             val items = element.select(tags.joinToString(", "))
             if (items.isEmpty()) {
-                element.replaceWith(htmlToElement("<p>${element.html()}</p>"))
+                // insert a paragraph node
+//                val parent = element.parent()
+//                val p = Element("p").insertChildren(0, element.childNodes())
+//                parent.appendChild(p)
+//                element.remove()
+                element.tagName("p")
+//                element.replaceWith(htmlToElement("<p>${element.html()}</p>"))
             } else {
                 val replacementNodes = ReplacementNodes().find(element)
                 replacementNodes.forEach {n ->
