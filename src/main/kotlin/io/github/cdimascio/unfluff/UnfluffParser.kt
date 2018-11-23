@@ -4,33 +4,34 @@ import org.jsoup.Jsoup
 
 class UnfluffParser(private val html: String, private val language: Language = Language.en) {
     private val document = Jsoup.parse(this.html)
-
+    private val stopWords = StopWords.load(language)
     private val cleaner = Cleaner(document, this.language)
-    init {
-
-    }
+    private val extractor = Extractor(document, this.language)
+    private val scorer = DocumentScorer(document, language, stopWords)
 
     fun parse(): UnfluffDocument {
-        val e = Extractor(document, this.language)
-        val title = e.title()
-        val softTitle = e.softTitle()
-        val desription = e.description()
-        val authors = e.authors()
-        val copyright = e.copyright()
-        val date = e.date()
-        val favicon = e.favicon()
-        val publisher = e.publisher()
-        val image = e.image()
-        val tags = e.tags()
-        val canonicalLink = e.canonicalLink()
-        val lang = e.lang()
-        val keywords = e.keywords()
 
-        Cleaner(document, this.language).clean()
+        val title = extractor.title()
+        val softTitle = extractor.softTitle()
+        val desription = extractor.description()
+        val authors = extractor.authors()
+        val copyright = extractor.copyright()
+        val date = extractor.date()
+        val favicon = extractor.favicon()
+        val publisher = extractor.publisher()
+        val image = extractor.image()
+        val tags = extractor.tags()
+        val canonicalLink = extractor.canonicalLink()
+        val lang = extractor.lang()
+        val keywords = extractor.keywords()
 
-        val links = e.links()
-        val videos = e.videos()
-        val text = e.text()
+        // clean and score document before extracting text, links and video
+        cleaner.clean()
+        val node = scorer.score()
+
+        val links = extractor.links()
+        val videos = extractor.videos()
+        val text = extractor.text(node)
 
         return UnfluffDocument(
             authors = authors,
