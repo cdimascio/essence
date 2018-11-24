@@ -22,15 +22,15 @@ class UnfluffParser(private val html: String, private val language: Language = L
         val image = extractor.image()
         val tags = extractor.tags()
         val canonicalLink = extractor.canonicalLink()
-        val lang = extractor.lang()
+        val language = extractor.lang()
         val keywords = extractor.keywords()
 
         // clean and score document before extracting text, links and video
         cleaner.clean()
         val node = scorer.score()
 
-        val links = extractor.links()
-        val videos = extractor.videos()
+        val links = extractor.links(node)
+        val videos = extractor.videos(node)
         val text = extractor.text(node)
 
         return UnfluffDocument(
@@ -44,9 +44,9 @@ class UnfluffParser(private val html: String, private val language: Language = L
             language = language,
             text = text,
             favicon = favicon,
-            image = image
-
-
+            image = image,
+            links = links,
+            canonicalLink = canonicalLink
         )
     }
 

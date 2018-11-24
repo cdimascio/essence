@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
+import kotlin.math.exp
 import kotlin.test.assertNotEquals
 
 class UnfluffSpec {
@@ -209,33 +210,37 @@ class UnfluffSpec {
                     assertEquals(origText, newText)
                 }
                 "link" -> {
-//                    assertEquals(expected["final_url", data.canonicaLink()])
-                    fail("link not implemented")
-
+                    assertEquals(expected["final_url"].asText(), data.canonicalLink)
                 }
                 "image" -> {
-                    assertEquals(expected["image"], data.image)
+                    assertEquals(expected["image"].asText(), data.image)
                 }
                 "description" -> {
-                    assertEquals(expected["description"], data.description)
+                    assertEquals(expected["meta_description"].asText(), data.description)
                  }
                 "lang" -> {
-                    assertEquals(expected["lang"], data.language)
+                    assertEquals(expected["meta_lang"].asText(), data.language)
                 }
                 "keywords" -> {
 //                    assertEquals(expected["keywords"], data.keywords)
                     fail("language not implemented")
                 }
                 "favicon" -> {
-                    assertEquals(expected["favicon"], data.language)
+                    assertEquals(expected["meta_favicon"].asText(), data.favicon)
                 }
                 "tags" -> {
 //                    assertEquals(expected["keywords"], data.tags)
                     fail("tags not implemented")
                 }
                 "links" -> {
-//                    assertEquals(expected["keywords"], data.links)
-                    fail("links not implemented")
+                    val links = data.links.sortedBy { it.text }
+                    val expectedLinks = expected["links"]?.map { Link(it["href"].asText(), it["text"].asText()) } ?: emptyList()
+                    links.zip(expectedLinks).forEach { (actual, expected) ->
+                        assertEquals(expected.text, actual.text)
+                        assertEquals(expected.href, actual.href)
+                    }
+
+                    assertEquals(expected["links"].asText(), data.links)
                 }
                 "videos" -> {
 //                    assertEquals(expected["keywords"], data.keywords)

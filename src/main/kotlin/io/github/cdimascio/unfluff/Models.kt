@@ -6,25 +6,19 @@ enum class Language {
     en
 }
 
-interface IDocument {
-    val text: String?
-    val language: Language
-}
-
+//interface IDocument {
+//    val text: String?
+//}
+//
 data class CleanDocument(
-    override val text: String?,
-    override val language: Language,
+    val text: String?,
     val doc: Document
-): IDocument
-
-data class FluffDocument(
-    override val text: String?,
-    override val language: Language
-): IDocument
+)
 
 data class UnfluffDocument(
-    override val text: String?,
-    override val language: Language,
+    val text: String?,
+//    override val language: Language,
+    val language: String?,
     val authors: List<String>,
     val title: String?,
     val softTitle: String?,
@@ -33,11 +27,18 @@ data class UnfluffDocument(
     val publisher: String?,
     val description: String?,
     val favicon: String?,
-    val image: String?
+    val image: String?,
+    val links: List<Link>,
+    val canonicalLink: String
 
-): IDocument
+)
 
 data class StopWordsStatistics(
     val wordCount: Int,
     val stopWords: List<String>
+)
+
+data class Link(
+    val href: String,
+    val text: String
 )

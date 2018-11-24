@@ -41,7 +41,6 @@ class Cleaner(private val doc: Document, private val language: Language) {
 
         return CleanDocument(
             text = d.html(),
-            language = language,
             doc = d
         )
     }

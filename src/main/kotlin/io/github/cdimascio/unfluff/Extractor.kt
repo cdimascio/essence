@@ -135,13 +135,6 @@ class Extractor(private val doc: Document, private val language: Language = Lang
         return cleanTitle(rawTitle(), listOf("|", " - ", "»"))
     }
 
-    fun text(node: Element?): String {
-        return node?.let {
-//            scorer.filterNodes()
-            formatter.format(node)
-        } ?: ""
-    }
-
     private fun rawTitle(): String? {
 
         val candidates = mutableListOf<Element>()
@@ -207,8 +200,8 @@ class Extractor(private val doc: Document, private val language: Language = Lang
 
     fun description(): String {
         return doc.selectFirst("""
-            meta[name=description],
-            meta[property='og:description']
+           meta[name=description],
+           meta[property='og:description']
             """.trimIndent())?.
             attr("content")?.
             cleanse() ?: ""
@@ -218,12 +211,24 @@ class Extractor(private val doc: Document, private val language: Language = Lang
 
     }
 
-    fun lang() {
-
+    fun lang(): String {
+        var lang = doc.select("html").attr("lang")
+        if (lang.isBlank()) {
+            lang = doc.selectFirst("""
+                "meta[name=lang]",
+                meta[http-equiv=content-language]
+            """.trimIndent())?.attr("content") ?: ""
+        }
+        if (lang.isNotBlank() && lang.length >= 2) {
+            // return the first 2 letter ISO lang code with no country
+            return lang.cleanse().substring(0,2).toLowerCase()
+        }
+        return ""
     }
 
-    fun canonicalLink() {
-
+    fun canonicalLink(): String {
+        val tag: Element? = doc.selectFirst("link[rel=canonical]")
+        return tag?.attr("href")?.cleanse() ?: ""
     }
 
     fun tags() {
@@ -242,16 +247,30 @@ class Extractor(private val doc: Document, private val language: Language = Lang
         return candidate?.attr("content")?.cleanse()
     }
 
-    fun videos() {
+    fun videos(node: Element?) {
 
     }
 
-    fun links() {
+    fun links(node: Element?): List<Link> {
+        val gatherLinks = { node: Element ->
+            node.select("a").fold(mutableListOf<Link>()){ links, node ->
+                val href = node.attr("href").cleanse()
+                val text = node.text().cleanse() // or html
+                if (href.isNotBlank() && text.isNotBlank()) {
+                    links += Link(href, text)
+                }
+                links
+            }
+        }
 
+        return node?.let{ gatherLinks(node) } ?: emptyList()
     }
 
-    fun ext() {
-
+    fun text(node: Element?): String {
+        return node?.let {
+            //            scorer.filterNodes()
+            formatter.format(node)
+        } ?: ""
     }
 
     fun String.cleanse(): String {
