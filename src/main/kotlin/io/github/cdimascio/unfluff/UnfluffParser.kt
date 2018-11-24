@@ -6,14 +6,14 @@ class UnfluffParser(private val html: String, private val language: Language = L
     private val document = Jsoup.parse(this.html)
     private val stopWords = StopWords.load(language)
     private val cleaner = Cleaner(document, this.language)
-    private val extractor = Extractor(document, this.language)
+    private val extractor = Extractor(document, this.language, stopWords)
     private val scorer = DocumentScorer(document, language, stopWords)
 
     fun parse(): UnfluffDocument {
 
         val title = extractor.title()
         val softTitle = extractor.softTitle()
-        val desription = extractor.description()
+        val description = extractor.description()
         val authors = extractor.authors()
         val copyright = extractor.copyright()
         val date = extractor.date()
@@ -37,7 +37,7 @@ class UnfluffParser(private val html: String, private val language: Language = L
             authors = authors,
             title = title,
             softTitle = softTitle,
-            description = desription,
+            description = description,
             publisher = publisher,
             date = date,
             copyright = copyright,

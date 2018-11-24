@@ -6,7 +6,6 @@ import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
 
 class DocumentScorer(private val doc: Document, private val language: Language, private val stopWords: StopWords) {
-    private val scoredNodes = mutableSetOf<Element>()
     private var scored = false
     private val heuristics = Heuristics(this, stopWords)
     private val filterByScorer = FilterScoredNodes(language, stopWords, heuristics)
@@ -51,12 +50,6 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
             // Give the current node a score of how many common words
             // it contains plus any boost
             val text = node.text()
-//            val text = when (node) {
-//                is Element -> node.text()
-//                is TextNode -> node.text()
-//                else -> ""
-//            }
-
             // Give the current node a score of how many common words
             // it contains plus any boost
             val wordStats = stopWords.statistics(text)
@@ -86,14 +79,13 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
             }
         }
 
-        scoredNodes.addAll(parentNodes)
         scored = true
-        val topNode = identifyTopNode()
+        val topNode = identifyTopNode(parentNodes)
         filterByScorer.clean(topNode, this)
         return topNode
     }
 
-    private fun identifyTopNode(): Element? {
+    private fun identifyTopNode(scoredNodes: Set<Element>): Element? {
         if (!scored) throw IllegalStateException("score() must be called prior to calling getTopNode")
         var topNodeScore = 0.0
         var topNode: Element? = null
@@ -101,8 +93,6 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
         // of 'texty' child nodes.
         // That's probably our best node!
         for (node in scoredNodes) {
-//            if (node is Element) {
-//                 TODO: only care about Element nodes?
             val score = getScore(node)
             if (score > topNodeScore) {
                 topNodeScore = score
@@ -111,9 +101,6 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
             if (topNode == null) {
                 topNode = node
             }
-//            } else {
-//                println("not an element, hence not considered for top node -ok?")
-//            }
         }
         return topNode
     }
@@ -126,6 +113,7 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
         }
     }
 
+    // TODO: why update the DOM to track score - do seomething else
     private fun updateScore(node: Node, addToScore: Double) {
         val currentScore = getScore(node)
         val score = currentScore + addToScore
@@ -186,7 +174,7 @@ class Heuristics(private val scorer: DocumentScorer, private val stopWords: Stop
     fun isNodeThresholdMet(parent: Node, child: Element): Boolean {
         val parentNodeScore = scorer.getScore(parent)
         val childNodeScore = scorer.getScore(child)
-        val thresholdScore = parentNodeScore * 0.8
+        val thresholdScore = parentNodeScore * 0.08
 
         val isAnExcludeTags = { tag: String -> listOf("td", "ul", "ol", "blockquote").contains(tag) }
         if (childNodeScore < thresholdScore && !isAnExcludeTags(child.tagName())) {
@@ -224,7 +212,7 @@ private class FilterScoredNodes(private val language: Language, private val stop
         }
         addSiblingsToTopNode(element)?.let { updatedElement ->
             for (child in updatedElement.children()) {
-                if (isParagraphOrAnchor(child)) {
+                if (!isParagraphOrAnchor(child)) {
                     if (heuristics.hasHighLinkDensity(child) ||
                         heuristics.isTableOrListWithNoParagraphs(child) ||
                         !heuristics.isNodeThresholdMet(updatedElement, child)) {
@@ -237,6 +225,7 @@ private class FilterScoredNodes(private val language: Language, private val stop
         }
     }
 
+    // Why add only previous siblings -- change name of function
     private fun addSiblingsToTopNode(targetNode: Element?): Element? {
         val baselineParagraphSiblingScore = getSiblingsScore(targetNode)
         if (targetNode == null) return null
@@ -293,7 +282,7 @@ private class FilterScoredNodes(private val language: Language, private val stop
             val hasHighLinkDensity = heuristics.hasHighLinkDensity(element)
             if (stats.stopWords.size > 2 && !hasHighLinkDensity) {
                 paragraphsNum += 1
-                paragraphsScore += paragraphsScore / paragraphsNum
+                paragraphsScore += stats.stopWords.size
             }
         }
         if (paragraphsNum > 0) {

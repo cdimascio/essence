@@ -1,11 +1,8 @@
 package io.github.cdimascio.unfluff
 
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
-import org.jsoup.nodes.TextNode
-import org.jsoup.parser.Parser
 
 val REGEX_BAD_TAGS = """^side$|combx|retweet|mediaarticlerelated|menucontainer|navbar|partner-gravity-ad|video-full-transcript|storytopbar-bucket|utility-bar|inline-share-tools|comment|PopularQuestions|contact|foot|footer|Footer|footnote|cnn_strycaptiontxt|cnn_html_slideshow|cnn_strylftcntnt|links|meta$|shoutbox|sponsor|tags|socialnetworking|socialNetworking|cnnStryHghLght|cnn_stryspcvbx|^inset$|pagetools|post-attributes|welcome_form|contentTools2|the_answers|communitypromo|runaroundLeft|subscribe|vcard|articleheadings|date|^print$|popup|author-dropdown|tools|socialtools|byline|konafilter|KonaFilter|breadcrumbs|^fn$|wp-caption-text|legende|ajoutVideo|timestamp|js_replies""".toRegex(RegexOption.IGNORE_CASE)
 
@@ -107,66 +104,62 @@ class Cleaner(private val doc: Document, private val language: Language) {
         }
     }
 
-    private fun htmlToElement2(parent: Element, html: String): Node {
-        // xml parser may break certain features
-        // htmlParser adds the html body tags
-        if (!html.trim().startsWith("<")) {
-            return TextNode(html)
-        }
-        val element = Jsoup.parse(html, "", Parser.xmlParser())
-        element.appendTo(parent)
-        return element
-    }
-
-//    private fun htmlToElement(html: String): Node {
-//        // xml parser may break certain features
-//        // htmlParser adds the html body tags
-//        val cleanHtml = html.trim()
-//        // TODO will this fail if a code block or something started with a '<'
-//        if (!cleanHtml.startsWith("<")) {
-//            return TextNode(html)
-//        }
-//        val (tag) = """^<(.*?)>""".toRegex().find(cleanHtml)?.destructured ?: throw IllegalArgumentException("bad html. element detected, but not element")
-//        val element = Jsoup.parse(cleanHtml, "", Parser.xmlParser())
-//        element.tagName(tag)
-//        return element
-//    }
-
     private fun elementToParagraph(doc: Document, tagName: String) {
         val elements = doc.select(tagName)
         val tags = listOf("a", "blockquote", "dl", "div", "img", "ol", "p", "pre", "table", "ul")
         val elementToChildrenMap = mutableMapOf<Element, MutableList<Node>>()
         for (element in elements) {
+            // TODO: can we find the first that isn't this element --- this is a performance issue as is!
             val items = element.find(tags.joinToString(", "))
-//            items.remove(element)
             if (items.isEmpty()) {
                 element.tagName("p")
             } else {
+
                 // REPLACEMENT NODES START
                 val children = elementToChildrenMap.getOrPut(element) {
                     mutableListOf()
                 }
                 for (child in element.childNodes()) {
-                    if (child is Element) {
+                    if (child is Element && child.tagName() != "a") {
                         child.tagName("p")
-                        children.add(child)
-                    } else if (child is Element && child.tagName() == "a") {
-                        val p = Element("p")
-                        child.appendTo(p)
-                        children.add(p)
+                        children += child
                     } else {
-                        children.add(child)
+                        children += child
                     }
                 }
-                // REPLACEMENT NODES END
             }
         }
-        elementToChildrenMap.entries.forEach{ (element, children) ->
+
+        val collect = mutableListOf<Node>()
+        elementToChildrenMap.entries.forEach { (element, children) ->
             children.forEach {
-                element.parent().appendChild(it)
+
+                if (it is Element && it.tagName() == "p") {
+                    if (collect.isNotEmpty()) {
+                        // add collected elements to a paragraph
+                        val paragraph = collect.fold(Element("p")) { paragraph, node ->
+                            paragraph.appendChild(node)
+                        }
+
+                        element.appendChild(paragraph)
+                        collect.clear()
+                    }
+                    element.appendChild(it)
+                } else {
+                    collect += it
+                }
             }
-            element.remove()
+            // add any node left in collect
+            if (collect.isNotEmpty()) {
+                // add collected elements to a paragraph
+                val paragraph = collect.fold(Element("p")) { paragraph, node ->
+                    paragraph.appendChild(node)
+                }
+                element.appendChild(paragraph)
+            }
+            element.unwrap()
         }
+        // END REPLACEMENT NODES
     }
 }
 
@@ -197,11 +190,9 @@ class Traverse(val nodeRemovalRules: List<(Node) -> Boolean>, val nodeModificati
      */
     fun purgeMarkedNodes() {
         nodesToRemove.forEach {
-//            println("removing ${it.nodeName()}")
             it.remove()
         }
     }
-
 }
 
 object TraversalRules {
@@ -209,7 +200,6 @@ object TraversalRules {
      * Remove node if a comment nodes and return true, else return false
      */
     fun removeCommentsTravRule(node: Node): Boolean {
-//        if (node.nodeName() == "#comment") println("comment rules")
         return node.nodeName() == "#comment"
     }
 
@@ -236,95 +226,3 @@ object TraversalRules {
         }
     }
 }
-
-//class ReplacementNodes {
-//    private val replacementText = mutableListOf<String>()
-//    //    val nodesToReturn = mutableListOf<Node>()
-//    private val nodesToReturn = mutableListOf<Node>()
-//    private val nodesToRemove = mutableListOf<Node>()
-//
-//    fun find(div: Element): List<Node> {
-//        for (child in div.childNodes()) {
-//            when (child) {
-//                is Element -> {
-//                    if (child.tagName() == "p" && replacementText.isNotEmpty()) {
-//                        val text = replacementText.joinToString(" ")
-//                        if (text.isNotBlank()) {
-//                            nodesToReturn.add(TextNode(text))
-//                        }
-//                        replacementText.clear()
-//                        child.unwrap()
-////                        val html = child.html()
-////
-////                        // dont add <p></p>
-////                        if (html.isNotBlank()) {
-////                            nodesToReturn.addAll(child.childNodes())
-////                        }
-//                    } else {
-////                        val html = child.html()
-//                        child.unwrap()
-////                        if (html.isNotBlank()) {
-////                            nodesToReturn.addAll(child.childNodes())
-////                        }
-//                    }
-//
-//                }
-//                is TextNode -> {
-//                    val text = child.text().replace("""\n""".toRegex(), """\n\n""").replace("""\t""".toRegex(), "").replace("""^\s+$""".toRegex(), "")
-//                    val GRAVITY_USED_ALREADY = "grv-used-already"
-//                    val isGravityusedAlready = { element: Element -> element.attr(GRAVITY_USED_ALREADY) == "yes" }
-//                    val setGravityusedAlready = { element: Element -> element.attr(GRAVITY_USED_ALREADY, "yes") }
-//                    if (text.length > 1) {
-//                        val previousSibling: Node? = child.previousSibling()
-//                        if (previousSibling is Element) {
-//                            var sib: Element? = previousSibling
-//                            var usedAlready = sib?.let { isGravityusedAlready(it) } ?: true
-//                            while (sib != null && sib.tagName() == "a" && !usedAlready) {
-//                                val p = Element("p")
-//                                sib.appendTo(p)
-////                                sib.replaceWith()
-//
-////                                val outer = " ${sib.outerHtml()} "
-////                                replacementText.add(outer)
-////                                nodesToRemove.add(sib)
-////                                setGravityusedAlready(sib)
-//                                sib = sib.previousElementSibling()
-//                                usedAlready = sib?.let { isGravityusedAlready(it) } ?: true
-//                            }
-//                        }
-//                        replacementText.add(text)
-//
-//                        val nextSibling = child.nextSibling()
-//
-//                        if (nextSibling is Element) {
-//                            var sib: Element? = nextSibling
-//                            var usedAlready = sib?.let { isGravityusedAlready(it) } ?: true
-//                            while (sib != null && sib.tagName() == "a" && !usedAlready) {
-//                                val outer = " ${sib.outerHtml()} "
-//                                replacementText.add(outer)
-//                                nodesToRemove.add(sib)
-//                                setGravityusedAlready(sib)
-//                                sib = sib.nextElementSibling()
-//                                usedAlready = sib?.let { isGravityusedAlready(it) } ?: true
-//                            }
-//                        }
-//                    }
-//                }
-//                else -> {
-//                }
-//            } // when
-//        } // for
-//
-//        if (replacementText.isNotEmpty()) {
-//            val text = replacementText.joinToString("")
-//            if (text.isNotBlank()) {
-//                nodesToReturn.add(TextNode(text))
-//            }
-//        }
-//
-//        nodesToRemove.filter { it.parentNode() != null }.forEach {
-//            it.remove()
-//        }
-//        return nodesToReturn
-//    }
-//}
