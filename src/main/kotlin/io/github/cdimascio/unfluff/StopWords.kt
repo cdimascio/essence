@@ -31,7 +31,7 @@ class StopWords private constructor(private val stopWords: List<String>) {
     }
 
     private fun removePunctuation(content: String): String {
-        return content.replace("""[\|\@\<\>\[\]\"\'\.,-\/#\?!$%\^&\*\+;:{}=\-_`~()]""", "")
+        return content.replace("""[\|\@\<\>\[\]\"\'\.,-\/#\?!$%\^&\*\+;:{}=\-_`~()]""".toRegex(), "")
     }
 
 }

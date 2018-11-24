@@ -3,7 +3,8 @@ package io.github.cdimascio.unfluff
 import org.jsoup.nodes.Document
 
 enum class Language {
-    en
+    en,
+    es
 }
 
 data class CleanDocument(
