@@ -204,7 +204,7 @@ class UnfluffSpec {
                 "cleaned_text" -> {
                     val origText = cleanOrigText(expected["cleaned_text"].asText())
                     val newText = cleanTestingTest(data.text ?: "", origText)
-                    assertNotEquals("", newText)
+                    assertNotEquals("text should not be null", "", newText)
                     assertTrue(data.text?.length ?: 0 >= origText.length)
                     assertEquals(origText, newText)
                 }

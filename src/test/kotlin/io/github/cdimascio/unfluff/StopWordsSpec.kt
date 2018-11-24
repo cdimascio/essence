@@ -1,5 +1,6 @@
 package io.github.cdimascio.unfluff
 
+import org.junit.Ignore
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -33,6 +34,7 @@ class StopWordsSpec {
     }
 
     @Test
+    @Ignore
     fun handlesSpanish() {
         val stopwords = StopWords.load(Language.es)
         val stats = stopwords.statistics("este es rico")

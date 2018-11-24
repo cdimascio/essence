@@ -4,16 +4,15 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
-import java.lang.IllegalStateException
 
 class DocumentScorer(private val doc: Document, private val language: Language, private val stopWords: StopWords) {
-    private val scoredNodes = mutableSetOf<Node>()
+    private val scoredNodes = mutableSetOf<Element>()
     private var scored = false
     private val heuristics = Heuristics(this, stopWords)
     private val filterByScorer = FilterScoredNodes(language, stopWords, heuristics)
 
     fun score(): Element? {
-        val nodesWithText = mutableListOf<Node>()
+        val nodesWithText = mutableListOf<Element>()
         val nodesToCheck = doc.select("p, pre, td")
         nodesToCheck.forEach { node ->
             val text = node.text()
@@ -29,15 +28,17 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
         var startingBoost = 1.0
         val negativeScoring = 0
         val bottomNegativescoreNodes = numNodesWithText * 0.25
-        val parentNodes = mutableSetOf<Node>()
+        val parentNodes = mutableSetOf<Element>()
 
         for ((index, node) in nodesWithText.iterator().withIndex()) {
             var boostScore = 0.0
-            if (isBoostable(node) && index > 0) {
+            // If this node has nearby nodes that contain
+            // some good text, give the node some boost points
+            if (isBoostable(node)) { // && index >= 0) {
                 boostScore = (1.0 / startingBoost) * 50
                 startingBoost += 1
             }
-            if (numNodesWithText > 15 && ((numNodesWithText - 1) <= bottomNegativescoreNodes)) {
+            if (numNodesWithText > 15 && ((numNodesWithText - index) <= bottomNegativescoreNodes)) {
                 val booster = bottomNegativescoreNodes - (numNodesWithText - 1)
                 boostScore = -1.0 * Math.pow(booster, 2.0)
                 val negScore = Math.abs(boostScore) + negativeScoring
@@ -49,11 +50,12 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
 
             // Give the current node a score of how many common words
             // it contains plus any boost
-            val text = when (node) {
-                is Element -> node.text()
-                is TextNode -> node.text()
-                else -> ""
-            }
+            val text = node.text()
+//            val text = when (node) {
+//                is Element -> node.text()
+//                is TextNode -> node.text()
+//                else -> ""
+//            }
 
             // Give the current node a score of how many common words
             // it contains plus any boost
@@ -75,7 +77,11 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
                 updateScore(it, upscore / 2.0)
                 updateNodeCount(it, 1)
                 if (!parentNodes.contains(grandParent)) {
-                    parentNodes.add(grandParent)
+                    if (grandParent is Element) {
+                        parentNodes.add(grandParent)
+                    } else {
+                        throw java.lang.IllegalStateException("Fix unfluffer code: Didn't think a parent could be anything but an element here")
+                    }
                 }
             }
         }
@@ -95,19 +101,19 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
         // of 'texty' child nodes.
         // That's probably our best node!
         for (node in scoredNodes) {
-            if (node is Element) {
-                // TODO only care about Element nodes?
-                val score = getScore(node)
-                if (score > topNodeScore) {
-                    topNodeScore = score
-                    topNode = node
-                }
-                if (topNode == null) {
-                    topNode = node
-                }
-            } else {
-                println("not an element, hence not considered for top node -ok?")
+//            if (node is Element) {
+//                 TODO only care about Element nodes?
+            val score = getScore(node)
+            if (score > topNodeScore) {
+                topNodeScore = score
+                topNode = node
             }
+            if (topNode == null) {
+                topNode = node
+            }
+//            } else {
+//                println("not an element, hence not considered for top node -ok?")
+//            }
         }
         return topNode
     }
@@ -150,8 +156,8 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
                 if (stepsAway >= MaxStepsawayFromNode) {
                     return false
                 }
-                val paraText = element.text()
-                val stats = stopWords.statistics(paraText)
+                val text = element.text()
+                val stats = stopWords.statistics(text)
                 if (stats.stopWords.size > MinimumStopwordCount) {
                     return true
                 }

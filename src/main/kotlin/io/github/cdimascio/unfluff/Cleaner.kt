@@ -138,6 +138,7 @@ class Cleaner(private val doc: Document, private val language: Language) {
         val elementToChildrenMap = mutableMapOf<Element, MutableList<Node>>()
         for (element in elements) {
             val items = element.select(tags.joinToString(", "))
+            items.remove(element)
             if (items.isEmpty()) {
                 element.tagName("p")
             } else {
