@@ -50,7 +50,7 @@ class UnfluffSpec {
     @Test
     fun links() {
         checkFixture("theverge1", listOf("links"))
-        checkFixture("techcrunch", listOf("links"))
+        checkFixture("techcrunch1", listOf("links"))
         checkFixture("polygon", listOf("links"))
     }
 
@@ -70,7 +70,6 @@ class UnfluffSpec {
     fun getsCleanedTextTheVerge() {
         checkFixture("theverge1", listOf("cleaned_text", "title", "link", "description", "lang", "favicon"))
     }
-
 
     @Test
     fun getsCleanedTextMcSweeneys() {
@@ -175,8 +174,8 @@ class UnfluffSpec {
     }
 
     @Test
-    fun getsCleanedTagsTheVerge2() {
-        checkFixture(site = "theverge2", fields = listOf("cleaned_text", "title", "link", "description", "lang", "favicon"))
+    fun getsCleanedTagsTheVerge() {
+        checkFixture(site = "theverge2", fields = listOf("tags"))
     }
 
     private fun cleanTestingTest(newText: String, originalText: String): String {
@@ -193,7 +192,6 @@ class UnfluffSpec {
     fun checkFixture(site: String, fields: List<String>) {
         val html = readFileFull("./fixtures/test_$site.html")
         val orig = parseJson(readFileFull("./fixtures/test_$site.json"))
-//        val origDoc = Jsoup.parse(html)
         val data = Unfluff.parse(html, Language.en)
 
         val expected = orig["expected"]
@@ -203,7 +201,7 @@ class UnfluffSpec {
                     assertEquals(expected["title"].asText(), data.title ?: "")
                 }
                 "cleaned_text" -> {
-                    val origText = expected["cleaned_text"].asText()
+                    val origText = cleanOrigText(expected["cleaned_text"].asText())
                     val newText = cleanTestingTest(data.text ?: "", origText)
                     assertNotEquals("", newText)
                     assertTrue(data.text?.length ?: 0 >= origText.length)
@@ -213,7 +211,7 @@ class UnfluffSpec {
                     assertEquals(expected["final_url"].asText(), data.canonicalLink)
                 }
                 "image" -> {
-                    assertEquals(expected["image"].asText(), data.image)
+                    assertEquals(expected["image"].asText().trim(), data.image)
                 }
                 "description" -> {
                     assertEquals(expected["meta_description"].asText(), data.description)
@@ -239,8 +237,6 @@ class UnfluffSpec {
                         assertEquals(expected.text, actual.text)
                         assertEquals(expected.href, actual.href)
                     }
-
-                    assertEquals(expected["links"].asText(), data.links)
                 }
                 "videos" -> {
 //                    assertEquals(expected["keywords"], data.keywords)

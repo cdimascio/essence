@@ -215,7 +215,7 @@ class Extractor(private val doc: Document, private val language: Language = Lang
         var lang = doc.select("html").attr("lang")
         if (lang.isBlank()) {
             lang = doc.selectFirst("""
-                "meta[name=lang]",
+                meta[name=lang],
                 meta[http-equiv=content-language]
             """.trimIndent())?.attr("content") ?: ""
         }
