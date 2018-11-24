@@ -2,6 +2,8 @@ package io.github.cdimascio.unfluff
 
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
+import org.jsoup.nodes.TextNode
+import org.jsoup.select.Elements
 
 object TraversalHelpers {
     fun getAllPreviousElementSiblings(node: Node): List<Element> {
@@ -25,4 +27,10 @@ object TraversalHelpers {
         }
         return previousSiblings
     }
+}
+
+fun Element.find(selector: String): Elements {
+    val results = this.select(selector)
+    results.remove(this)
+    return results
 }

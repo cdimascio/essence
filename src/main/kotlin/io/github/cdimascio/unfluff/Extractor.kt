@@ -274,7 +274,7 @@ class Extractor(private val doc: Document, private val language: Language = Lang
 
     fun links(node: Element?): List<Link> {
         val gatherLinks = { node: Element ->
-            node.select("a").fold(mutableListOf<Link>()){ links, node ->
+            node.find("a").fold(mutableListOf<Link>()){ links, node ->
                 val href = node.attr("href").cleanse()
                 val text = node.text().cleanse() // or html
                 if (href.isNotBlank() && text.isNotBlank()) {

@@ -67,7 +67,7 @@ class Cleaner(private val doc: Document, private val language: Language) {
     private fun cleanEmTags() {
         val ems = d.getElementsByTag("em")
         ems.forEach {
-            val images = ems.select("img")
+            val images = it.find("img")
             if (images.isEmpty()) {
                 it.unwrap()
             }
@@ -137,8 +137,8 @@ class Cleaner(private val doc: Document, private val language: Language) {
         val tags = listOf("a", "blockquote", "dl", "div", "img", "ol", "p", "pre", "table", "ul")
         val elementToChildrenMap = mutableMapOf<Element, MutableList<Node>>()
         for (element in elements) {
-            val items = element.select(tags.joinToString(", "))
-            items.remove(element)
+            val items = element.find(tags.joinToString(", "))
+//            items.remove(element)
             if (items.isEmpty()) {
                 element.tagName("p")
             } else {
@@ -197,7 +197,7 @@ class Traverse(val nodeRemovalRules: List<(Node) -> Boolean>, val nodeModificati
      */
     fun purgeMarkedNodes() {
         nodesToRemove.forEach {
-            println("removing ${it.nodeName()}")
+//            println("removing ${it.nodeName()}")
             it.remove()
         }
     }
@@ -209,7 +209,7 @@ object TraversalRules {
      * Remove node if a comment nodes and return true, else return false
      */
     fun removeCommentsTravRule(node: Node): Boolean {
-        if (node.nodeName() == "#comment") println("comment rules")
+//        if (node.nodeName() == "#comment") println("comment rules")
         return node.nodeName() == "#comment"
     }
 

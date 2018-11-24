@@ -16,7 +16,7 @@ class Formatter(private val doc: Document, val language: Language, private val s
     }
 
     private fun removeNegativescoresNodes(node: Element) {
-        val gravityElements = node.select("*[gravityScore]")
+        val gravityElements = node.find("*[gravityScore]")
         gravityElements.forEach {
             val score = try {
                 it.attr("gravityScore").toDouble()
@@ -31,21 +31,21 @@ class Formatter(private val doc: Document, val language: Language, private val s
     }
 
     private fun linksToText(node: Element) {
-        val nodes = node.select("a")
+        val nodes = node.find("a")
         nodes.forEach {
             it.unwrap()
         }
     }
 
     private fun addNewlineToBr(node: Element) {
-        val brs = node.select("br")
+        val brs = node.find("br")
         brs.forEach {
             it.replaceWith(TextNode("\n\n"))
         }
     }
 
     private fun replaceWithText(node: Element) {
-        val nodes = node.select("b, strong, i, br, sup")
+        val nodes = node.find("b, strong, i, br, sup")
         nodes.forEach {
             if (it.text().isNotBlank()) {
                 it.unwrap()
@@ -54,13 +54,13 @@ class Formatter(private val doc: Document, val language: Language, private val s
     }
 
     private fun removeFewwordsParagraphs(node: Element) {
-        val elements = node.select("*")
+        val elements = node.find("*")
         for (e in elements) {
             val tag = e.tagName()
             val text = e.text()
             val numStopWords = stopWords.statistics(text).stopWords.size
-            val hasObject = e.select("object").isNotEmpty()
-            val hasEmbed = e.select("embed").isNotEmpty()
+            val hasObject = e.find("object").isNotEmpty()
+            val hasEmbed = e.find("embed").isNotEmpty()
             if ((tag != "br" || text != "\\r") && numStopWords < 3 && !hasObject && !hasEmbed) {
                 println("removing $e (small paragraph 1)")
                 if (e.parent() != null)
@@ -122,7 +122,7 @@ class Formatter(private val doc: Document, val language: Language, private val s
     }
 
     private fun ulToText(node: Element): String {
-        val nodes = node.select("li")
+        val nodes = node.find("li")
         val text = nodes.fold("") { text, n ->
             text + "\n ${n.text()}"
         }

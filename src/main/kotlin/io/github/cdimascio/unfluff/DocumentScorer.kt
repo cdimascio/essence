@@ -102,7 +102,7 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
         // That's probably our best node!
         for (node in scoredNodes) {
 //            if (node is Element) {
-//                 TODO only care about Element nodes?
+//                 TODO: only care about Element nodes?
             val score = getScore(node)
             if (score > topNodeScore) {
                 topNodeScore = score
@@ -169,7 +169,7 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
 
 class Heuristics(private val scorer: DocumentScorer, private val stopWords: StopWords) {
     fun isTableOrListWithNoParagraphs(element: Element): Boolean {
-        val paragraphs = element.select("p")
+        val paragraphs = element.find("p")
         val remainingParagraphs = mutableListOf<Element>()
         for (p in paragraphs) {
             val text = p.text()
@@ -197,15 +197,13 @@ class Heuristics(private val scorer: DocumentScorer, private val stopWords: Stop
 
     fun hasHighLinkDensity(node: Node): Boolean {
         if (node is Element) {
-            val links = node.select("a")
+            val links = node.find("a")
             if (links.isNotEmpty()) {
-                val linkText = links.map {
-                    it.text()
-                }.joinToString(" ")
+                val text = node.text()
+                val words = text.split(" ")
 
-                val words = node.text().split(" ")
-                val linkWords = linkText.split(' ')
-
+                val linkText = links.map{ it.text() }.joinToString(" ")
+                val linkWords = linkText.split(" ")
 
                 val percentLinkWords = linkWords.size / words.size
                 val score = percentLinkWords * links.size
@@ -259,7 +257,7 @@ private class FilterScoredNodes(private val language: Language, private val stop
         if (node.tagName() == "p" && node.text().isNotBlank()) {
             return listOf(node.text())
         }
-        val candidateParagraphs = node.select("p")
+        val candidateParagraphs = node.find("p")
         if (candidateParagraphs.isEmpty()) {
             return emptyList()
         }
@@ -288,7 +286,7 @@ private class FilterScoredNodes(private val language: Language, private val stop
         var paragraphsScore = 0.0
         if (topNode == null) return base
 
-        val elementsToCheck = topNode.select("p")
+        val elementsToCheck = topNode.find("p")
         for (element in elementsToCheck) {
             val text = element.text()
             val stats = stopWords.statistics(text)
