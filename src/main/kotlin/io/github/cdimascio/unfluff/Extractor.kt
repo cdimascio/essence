@@ -207,8 +207,11 @@ class Extractor(private val doc: Document, private val language: Language = Lang
             cleanse() ?: ""
     }
 
-    fun keywords() {
-
+    fun keywords(): String {
+        return doc.
+            selectFirst("""meta[name=keywords]""")?.
+            attr("content")?.
+            cleanse() ?: ""
     }
 
     fun lang(): String {
@@ -231,8 +234,26 @@ class Extractor(private val doc: Document, private val language: Language = Lang
         return tag?.attr("href")?.cleanse() ?: ""
     }
 
-    fun tags() {
+    fun tags(): List<String> {
+        var candidates = doc.select("a[rel='tag']")
+        if (candidates.isEmpty()) {
+            candidates = doc.select("""
+                a[href*='/tag/'],
+                a[href*='/tags/'],
+                a[href*='/topic/'],
+                a[href*='?keyword=']
+            """.trimIndent())
+        }
 
+        if (candidates.isEmpty()) {
+            return emptyList()
+        }
+
+        return candidates.map{
+                it.text().cleanse().replace("""[\s\t\n]+""".toRegex(), " ")
+            }.filter{
+                it.isNotBlank()
+            }.distinct()
     }
 
     fun image(): String? {

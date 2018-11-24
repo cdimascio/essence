@@ -6,10 +6,6 @@ enum class Language {
     en
 }
 
-//interface IDocument {
-//    val text: String?
-//}
-//
 data class CleanDocument(
     val text: String?,
     val doc: Document
@@ -17,7 +13,6 @@ data class CleanDocument(
 
 data class UnfluffDocument(
     val text: String?,
-//    override val language: Language,
     val language: String?,
     val authors: List<String>,
     val title: String?,
@@ -29,7 +24,9 @@ data class UnfluffDocument(
     val favicon: String?,
     val image: String?,
     val links: List<Link>,
-    val canonicalLink: String
+    val canonicalLink: String,
+    val keywords: String,
+    val tags: List<String>
 
 )
 

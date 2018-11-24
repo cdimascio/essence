@@ -1,6 +1,7 @@
 package io.github.cdimascio.unfluff
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
@@ -26,7 +27,7 @@ class UnfluffSpec {
 
     @Test
     fun readsKeywords() {
-        checkFixture("allnewlyrics1" , listOf("description"))
+        checkFixture("allnewlyrics1" , listOf("keywords"))
     }
 
     @Test
@@ -220,15 +221,17 @@ class UnfluffSpec {
                     assertEquals(expected["meta_lang"].asText(), data.language)
                 }
                 "keywords" -> {
-//                    assertEquals(expected["keywords"], data.keywords)
-                    fail("language not implemented")
+                    assertEquals(expected["meta_keywords"].asText(), data.keywords)
                 }
                 "favicon" -> {
                     assertEquals(expected["meta_favicon"].asText(), data.favicon)
                 }
                 "tags" -> {
-//                    assertEquals(expected["keywords"], data.tags)
-                    fail("tags not implemented")
+                    val tags = data.tags.sorted()
+                    val expectedTags = expected["tags"]?.map { it.asText() }?.sorted() ?: emptyList()
+                    expectedTags.zip(tags).forEach { (expected, actual) ->
+                        assertEquals(expected, actual)
+                    }
                 }
                 "links" -> {
                     val links = data.links.sortedBy { it.text }

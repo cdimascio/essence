@@ -46,7 +46,9 @@ class UnfluffParser(private val html: String, private val language: Language = L
             favicon = favicon,
             image = image,
             links = links,
-            canonicalLink = canonicalLink
+            canonicalLink = canonicalLink,
+            keywords = keywords,
+            tags = tags
         )
     }
 
