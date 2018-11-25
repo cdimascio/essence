@@ -22,7 +22,7 @@ class StopWords private constructor(private val stopWords: List<String>) {
 
     fun statistics(content: String): StopWordsStatistics {
         val cleanedContent = removePunctuation(content)
-        val candidates = cleanedContent.split(" ").map{ it.toLowerCase().trim() }
+        val candidates = cleanedContent.split(" ").map{ it.toLowerCase() }
         val stopWordsInContent = candidates.filter{ word -> stopWords.contains(word) }
         return StopWordsStatistics(
             wordCount = candidates.size,

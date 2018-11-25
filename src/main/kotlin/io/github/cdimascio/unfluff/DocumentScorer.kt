@@ -10,19 +10,23 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
     private val heuristics = Heuristics(this, stopWords)
     private val filterByScorer = FilterScoredNodes(language, stopWords, heuristics)
 
+    private var count = 0
     fun score(): Element? {
         val nodesWithText = mutableListOf<Element>()
         val nodesToCheck = doc.select("p, pre, td")
+        println("-----> ${nodesToCheck.size}")
         nodesToCheck.forEach { node ->
             val text = node.text()
             val wordStats = stopWords.statistics(text)
             val hasHighLinkDensity = heuristics.hasHighLinkDensity(node)
 
+            println("${count++}\t${wordStats.stopWords.size > 2 && !hasHighLinkDensity}\t$hasHighLinkDensity\t${wordStats.stopWords.size}\t${node.html().substring(0, Math.min(30, node.html().length))}")
             if (wordStats.stopWords.size > 2 && !hasHighLinkDensity) {
                 nodesWithText.add(node)
             }
         }
 
+        println("-----> ${nodesWithText.size}")
         val numNodesWithText = nodesWithText.size
         var startingBoost = 1.0
         val negativeScoring = 0
@@ -185,16 +189,20 @@ class Heuristics(private val scorer: DocumentScorer, private val stopWords: Stop
 
     fun hasHighLinkDensity(node: Node): Boolean {
         if (node is Element) {
+            val text = node.text()
+            val words = if (text.isNotBlank()) text.split(" ") else emptyList()
             val links = node.find("a")
-            if (links.isNotEmpty()) {
-                val text = node.text()
-                val words = text.split(" ")
+            if (words.isEmpty() && links.isNotEmpty()){
+                return true
+            } else if (links.isNotEmpty()) {
+//                val text = node.text()
 
                 val linkText = links.map{ it.text() }.joinToString(" ")
                 val linkWords = linkText.split(" ")
 
-                val percentLinkWords = linkWords.size / words.size
+                val percentLinkWords = linkWords.size.toDouble() / words.size.toDouble()
                 val score = percentLinkWords * links.size
+//                println("$score ${linkWords.size}, ${links.size}, ${linkWords.size}")
 //                println("linkWord/words ${linkWords.size} / ${words.size} = $percentLinkWords | $percentLinkWords * ${links.size} = $score")
                 return score >= 1.0
             }
