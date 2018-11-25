@@ -118,7 +118,7 @@ class Formatter(private val doc: Document, val language: Language, private val s
         // regex that matches ranges of unicode characters used in words.
         // TODO
         // apply filter on texts.filter { /*  ensure at least one character  is present */}
-        return texts.joinToString(" ")
+        return texts.joinToString("\n\n")
     }
 
     private fun ulToText(node: Element): String {
