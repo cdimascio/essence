@@ -35,6 +35,7 @@ class Cleaner(private val doc: Document, private val language: Language) {
         cleanUnderlines()
 
         elementToParagraph(d, "div")
+
 //        elementToParagraph(d, "span")
 
         return CleanDocument(
@@ -106,61 +107,69 @@ class Cleaner(private val doc: Document, private val language: Language) {
     }
 
     private fun elementToParagraph(doc: Document, tagName: String) {
+//        println (doc.html())
         val elements = doc.select(tagName)
         val tags = listOf("a", "blockquote", "dl", "div", "img", "ol", "p", "pre", "table", "ul")
         val elementToChildrenMap = mutableMapOf<Element, MutableList<Node>>()
+        println("===divs ${elements.size}")
         for (element in elements) {
             // TODO: can we find the first that isn't this element --- this is a performance issue as is!
             val items = element.find(tags.joinToString(", "))
             if (items.isEmpty()) {
                 element.tagName("p")
             } else {
-
-                // REPLACEMENT NODES START
-                val children = elementToChildrenMap.getOrPut(element) {
-                    mutableListOf()
-                }
-                for (child in element.childNodes()) {
-                    if (child is Element && child.tagName() != "a") {
-                        child.tagName("p")
-                        children += child
+                val replaceNodes = getReplacementNodes(element)
+                val pReplacements = mutableListOf<String>()
+                val pReplacementElements = mutableListOf<Element>()
+                var html = ""
+                for (rNode in replaceNodes) {
+                    if (rNode is TextNode && rNode.text().isNotBlank()) {
+                        html += "<p>${rNode.text()}</p>"
+                        pReplacementElements.add(Element("p").html(rNode.text()))
+//                        pReplacements.add(html)
+//                        val e = Element("p")
+//                        e.html(rNode.text())
+//                        pReplacements.add(e)
+                    } else if (rNode is Element) {
+                        html += "<p>${rNode.outerHtml()}</p>"
+                        pReplacementElements.add(Element("p").html(rNode.outerHtml()))
+//                        println(html)
+//                        val e = Element("p")
+//                        e.html(rNode.html())
+//                        pReplacements.add(e)
                     } else {
-                        children += child
+                        println("ERROR - should not get here")
                     }
                 }
+                element.parent().insertChildren(element.siblingIndex(), pReplacementElements)
+                element.remove()
+//                element.html(html)
+//                element.unwrap()
             }
         }
 
-        val collect = mutableListOf<Node>()
-        elementToChildrenMap.entries.forEach { (element, children) ->
-            children.forEach {
+//        elements.forEach {
+//            if (it.childNodes().size == 0) it.remove()
+//            if (it.hasParent()) it.unwrap()
+//        }
+        println()
 
-                if (it is Element && it.tagName() == "p") {
-                    if (collect.isNotEmpty()) {
-                        // add collected elements to a paragraph
-                        val paragraph = collect.fold(Element("p")) { paragraph, node ->
-                            paragraph.appendChild(node)
-                        }
+    }
 
-                        element.appendChild(paragraph)
-                        collect.clear()
-                    }
-                    element.appendChild(it)
-                } else {
-                    collect += it
-                }
+    private fun getReplacementNodes(div: Node): List<Node> {
+        val children = div.childNodes()
+        val nodesToReturn = mutableListOf<Node>()
+        val replacmentText = mutableListOf<String>()
+        for (kid in children) {
+            if (kid is Element && kid.tagName() == "p" && replacmentText.isNotEmpty()) {
+                println("---->HERE - NOT IMPLEMENTED")
+            } else if (kid is TextNode){
+                println("---->HERE TEXT NODE - NOT IMPLEMENTED")
+            } else {
+                nodesToReturn.add(kid)
             }
-            // add any node left in collect
-            if (collect.isNotEmpty()) {
-                // add collected elements to a paragraph
-                val paragraph = collect.fold(Element("p")) { paragraph, node ->
-                    paragraph.appendChild(node)
-                }
-                element.appendChild(paragraph)
-            }
-            element.unwrap()
         }
-        // END REPLACEMENT NODES
+        return nodesToReturn
     }
 }
 
