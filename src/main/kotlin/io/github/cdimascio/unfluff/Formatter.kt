@@ -62,14 +62,14 @@ class Formatter(private val doc: Document, val language: Language, private val s
             val hasObject = e.find("object").isNotEmpty()
             val hasEmbed = e.find("embed").isNotEmpty()
             if ((tag != "br" || text != "\\r") && numStopWords < 3 && !hasObject && !hasEmbed) {
-                println("removing $e (small paragraph 1)")
+//                println("removing $e (small paragraph 1)")
                 if (e.parent() != null)
                     e.remove()
             } else {
                 val trimmed = text.trim()
                 val numWords = text.split(" ").size
                 if (trimmed.isNotBlank() && numWords < 8 && trimmed.first() == '(' && trimmed.last() == ')') {
-                    println("removing $e (small paragraph 2)")
+//                    println("removing $e (small paragraph 2)")
                     if (e.parent() != null)
                         e.remove()
                 }

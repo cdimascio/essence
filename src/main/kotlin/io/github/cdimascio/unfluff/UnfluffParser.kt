@@ -10,7 +10,7 @@ class UnfluffParser(private val html: String, private val language: Language = L
     private val scorer = DocumentScorer(document, language, stopWords)
 
     fun parse(): UnfluffDocument {
-
+        println(document.select("div").size)
         val title = extractor.title()
         val softTitle = extractor.softTitle()
         val description = extractor.description()
@@ -25,8 +25,10 @@ class UnfluffParser(private val html: String, private val language: Language = L
         val language = extractor.lang()
         val keywords = extractor.keywords()
 
+        println(document.select("div").size)
         // clean and score document before extracting text, links and video
         cleaner.clean()
+        println(document.select("div").size)
         val node = scorer.score()
 
         val links = extractor.links(node)

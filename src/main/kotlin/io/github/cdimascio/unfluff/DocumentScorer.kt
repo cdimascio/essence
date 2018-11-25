@@ -195,7 +195,7 @@ class Heuristics(private val scorer: DocumentScorer, private val stopWords: Stop
 
                 val percentLinkWords = linkWords.size / words.size
                 val score = percentLinkWords * links.size
-                println("linkWord/words ${linkWords.size} / ${words.size} = $percentLinkWords | $percentLinkWords * ${links.size} = $score")
+//                println("linkWord/words ${linkWords.size} / ${words.size} = $percentLinkWords | $percentLinkWords * ${links.size} = $score")
                 return score >= 1.0
             }
         }

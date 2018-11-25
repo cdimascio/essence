@@ -3,6 +3,7 @@ package io.github.cdimascio.unfluff
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
+import org.jsoup.nodes.TextNode
 
 val REGEX_BAD_TAGS = """^side$|combx|retweet|mediaarticlerelated|menucontainer|navbar|partner-gravity-ad|video-full-transcript|storytopbar-bucket|utility-bar|inline-share-tools|comment|PopularQuestions|contact|foot|footer|Footer|footnote|cnn_strycaptiontxt|cnn_html_slideshow|cnn_strylftcntnt|links|meta$|shoutbox|sponsor|tags|socialnetworking|socialNetworking|cnnStryHghLght|cnn_stryspcvbx|^inset$|pagetools|post-attributes|welcome_form|contentTools2|the_answers|communitypromo|runaroundLeft|subscribe|vcard|articleheadings|date|^print$|popup|author-dropdown|tools|socialtools|byline|konafilter|KonaFilter|breadcrumbs|^fn$|wp-caption-text|legende|ajoutVideo|timestamp|js_replies""".toRegex(RegexOption.IGNORE_CASE)
 
@@ -34,7 +35,7 @@ class Cleaner(private val doc: Document, private val language: Language) {
         cleanUnderlines()
 
         elementToParagraph(d, "div")
-        elementToParagraph(d, "span")
+//        elementToParagraph(d, "span")
 
         return CleanDocument(
             text = d.html(),
@@ -204,14 +205,15 @@ object TraversalRules {
     }
 
     fun removeBadTagsTravRule(node: Node) =
-        node.attr("id").matches(REGEX_BAD_TAGS) ||
-            node.attr("class").matches(REGEX_BAD_TAGS) ||
-            node.attr("name").matches(REGEX_BAD_TAGS)
+        REGEX_BAD_TAGS.containsMatchIn(node.attr("id")) ||
+            REGEX_BAD_TAGS.containsMatchIn(node.attr("class")) ||
+            REGEX_BAD_TAGS.containsMatchIn(node.attr("name"))
 
     fun removeMatching(re: Regex): (Node) -> Boolean {
         return { node: Node ->
-            node.attr("id").matches(re) ||
-                node.attr("class").matches(re)
+            (node is Element && node.tagName() == "div") &&
+                (re.containsMatchIn(node.attr("id")) ||
+                    re.containsMatchIn(node.attr("class")))
         }
     }
 
