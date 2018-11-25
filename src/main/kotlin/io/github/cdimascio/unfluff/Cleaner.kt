@@ -106,65 +106,57 @@ class Cleaner(private val doc: Document, private val language: Language) {
         }
     }
 
+    var count = 0
     private fun elementToParagraph(doc: Document, tagName: String) {
 //        println (doc.html())
         val elements = doc.select(tagName)
         val tags = listOf("a", "blockquote", "dl", "div", "img", "ol", "p", "pre", "table", "ul")
-        val elementToChildrenMap = mutableMapOf<Element, MutableList<Node>>()
         println("===divs ${elements.size}")
+        println("p 1 ${doc.select("p").size}")
         for (element in elements) {
             // TODO: can we find the first that isn't this element --- this is a performance issue as is!
             val items = element.find(tags.joinToString(", "))
             if (items.isEmpty()) {
+                count += 1
+                val html = element.outerHtml()
                 element.tagName("p")
+                element.html(html)
+                println(count)
             } else {
                 val replaceNodes = getReplacementNodes(element)
-                val pReplacements = mutableListOf<String>()
+//                println("REPN ${replaceNodes.size}")
                 val pReplacementElements = mutableListOf<Element>()
-                var html = ""
                 for (rNode in replaceNodes) {
                     if (rNode is TextNode && rNode.text().isNotBlank()) {
-                        html += "<p>${rNode.text()}</p>"
                         pReplacementElements.add(Element("p").html(rNode.text()))
-//                        pReplacements.add(html)
-//                        val e = Element("p")
-//                        e.html(rNode.text())
-//                        pReplacements.add(e)
                     } else if (rNode is Element) {
-                        html += "<p>${rNode.outerHtml()}</p>"
-                        pReplacementElements.add(Element("p").html(rNode.outerHtml()))
-//                        println(html)
-//                        val e = Element("p")
-//                        e.html(rNode.html())
-//                        pReplacements.add(e)
+                        if (rNode.html().isNotBlank())
+                            pReplacementElements.add(Element("p").html(rNode.html()))
+                        else
+                            println("============EMPTY NODE========")
                     } else {
                         println("ERROR - should not get here")
                     }
                 }
                 element.parent().insertChildren(element.siblingIndex(), pReplacementElements)
                 element.remove()
-//                element.html(html)
-//                element.unwrap()
             }
         }
-
-//        elements.forEach {
-//            if (it.childNodes().size == 0) it.remove()
-//            if (it.hasParent()) it.unwrap()
-//        }
         println()
+        println("p 2 ${doc.select("p").size}")
 
     }
 
     private fun getReplacementNodes(div: Node): List<Node> {
         val children = div.childNodes()
+//        println("======>>${children.size}")
         val nodesToReturn = mutableListOf<Node>()
         val replacmentText = mutableListOf<String>()
         for (kid in children) {
             if (kid is Element && kid.tagName() == "p" && replacmentText.isNotEmpty()) {
-                println("---->HERE - NOT IMPLEMENTED")
-            } else if (kid is TextNode){
-                println("---->HERE TEXT NODE - NOT IMPLEMENTED")
+//                println("---->HERE - NOT IMPLEMENTED")
+            } else if (kid is TextNode) {
+//                println("---->HERE TEXT NODE - NOT IMPLEMENTED")
             } else {
                 nodesToReturn.add(kid)
             }
