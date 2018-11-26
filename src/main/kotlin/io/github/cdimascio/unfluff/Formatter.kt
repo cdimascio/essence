@@ -9,7 +9,7 @@ class Formatter(private val doc: Document, val language: Language, private val s
     fun format(node: Element): String {
         removeNegativescoresNodes(node)
         linksToText(node)
-        addNewlineToBr( node)
+        addNewlineToBr(node)
         replaceWithText(node)
         removeFewwordsParagraphs(node)
         return convertToText(node)
@@ -93,23 +93,21 @@ class Formatter(private val doc: Document, val language: Language, private val s
 
             if (hangingText.isNotBlank()) {
                 val text = cleanParagraphText(hangingText.toString())
-                texts.addAll(text.split("""\r?\n""".toRegex()).map { it.trim() })
+                texts.addAll(text.split("""\r?\n""".toRegex())) //.map { it.trim() })
                 hangingText.setLength(0)
             }
-            val childText = when (child) {
-                is TextNode -> child.text() // can't get here checked start of for loop
-                is Element -> child.text()
-                else -> ""
-            }
-            val text = cleanParagraphText(childText).replace("""(\\w+\\.)([A-Z]+)""".toRegex()) {
-                val (group1, group2) = it.destructured
-                "$group1 $group2"
-            }
-            texts.addAll(text.split("""\r?\n""".toRegex()).map { it.trim() })
+            if (child is Element) {
+                val text = cleanParagraphText(child.text())
+                    .replace("""(\\w+\\.)([A-Z]+)""".toRegex()) {
+                        val (group1, group2) = it.destructured
+                        "$group1 $group2"
+                    }
+                texts.addAll(text.split("""\r?\n""".toRegex())) //.map { it.trim() })
 
-            if (hangingText.isNotBlank()) {
-                val text = cleanParagraphText(hangingText.toString())
-                texts.addAll(text.split("""\r?\n""".toRegex()).map { it.trim() })
+                if (hangingText.isNotBlank()) {
+                    val text = cleanParagraphText(hangingText.toString())
+                    texts.addAll(text.split("""\r?\n""".toRegex())) //.map { it.trim() })
+                }
             }
         }
 
@@ -118,18 +116,22 @@ class Formatter(private val doc: Document, val language: Language, private val s
         // regex that matches ranges of unicode characters used in words.
         // TODO
         // apply filter on texts.filter { /*  ensure at least one character  is present */}
-        return texts.joinToString("\n\n")
+        return texts.map { it.trim() }.joinToString("\n\n")
     }
 
     private fun ulToText(node: Element): String {
         val nodes = node.find("li")
         val text = nodes.fold("") { text, n ->
-            text + "\n ${n.text()}"
+            text + "\n * ${n.text()}"
         }
         return if (text.isNotBlank()) "\n $text" else ""
     }
 
     private fun cleanParagraphText(text: String): String {
-        return text.trim().replace("""[\s\t]+""".toRegex(), " ")
+        return text.trim()
+            // replace 1 or more tabs and spaces with 1 space
+            .replace("""[^\S\n]+""".toRegex(), " ")
+            // replace 3 or more \n with 2 \n
+            .replace("""[\n{3,]""", "\n\n")
     }
 }
