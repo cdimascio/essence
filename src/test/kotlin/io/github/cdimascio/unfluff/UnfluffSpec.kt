@@ -147,10 +147,10 @@ class UnfluffSpec {
 
     @Test
     fun getsCleanedTextGooseRegressions() {
-//        checkFixture(site = "issue4", fields = listOf("cleaned_text"))
-//        checkFixture(site = "issue24", fields = listOf("cleaned_text"))
+        checkFixture(site = "issue4", fields = listOf("cleaned_text"))
+        checkFixture(site = "issue24", fields = listOf("cleaned_text"))
         checkFixture(site = "issue25", fields = listOf("cleaned_text"))
-//        checkFixture(site = "issue28", fields = listOf("cleaned_text"))
+        checkFixture(site = "issue28", fields = listOf("cleaned_text"))
     }
 
     @Test
@@ -206,8 +206,6 @@ class UnfluffSpec {
                     val newText = cleanTestingTest(data.text ?: "", origText)
                     assertNotEquals("text should not be null", "", newText)
                     assertTrue(data.text?.length ?: 0 >= origText.length)
-                    println(origText)
-                    println(newText)
                     assertEquals(origText, newText)
                 }
                 "link" -> {

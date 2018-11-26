@@ -62,14 +62,13 @@ class Formatter(private val doc: Document, val language: Language, private val s
             val hasObject = e.find("object").isNotEmpty()
             val hasEmbed = e.find("embed").isNotEmpty()
             if ((tag != "br" || text != "\\r") && numStopWords < 3 && !hasObject && !hasEmbed) {
-//                println("removing $e (small paragraph 1)")
                 if (e.parent() != null)
                     e.remove()
             } else {
                 val trimmed = text.trim()
                 val numWords = text.split(" ").size
-                if (trimmed.isNotBlank() && numWords < 8 && trimmed.first() == '(' && trimmed.last() == ')') {
-//                    println("removing $e (small paragraph 2)")
+                if (trimmed.isNotBlank() && numWords < 25 && trimmed.first() == '(' && trimmed.last() == ')') {
+                    // remove paragraph's that are surrounded entirely by parens and have few-ish words
                     if (e.parent() != null)
                         e.remove()
                 }
@@ -81,7 +80,7 @@ class Formatter(private val doc: Document, val language: Language, private val s
         // To hold any text fragments that end up in text nodes outside of
         // html elements
         val texts = mutableListOf<String>()
-        val hangingText = StringBuffer() //"" // should be stringbuffer
+        val hangingText = StringBuffer()
         for (child in node.childNodes()) {
             if (child is TextNode) {
                 hangingText.append(child.text())
@@ -93,7 +92,7 @@ class Formatter(private val doc: Document, val language: Language, private val s
 
             if (hangingText.isNotBlank()) {
                 val text = cleanParagraphText(hangingText.toString())
-                texts.addAll(text.split("""\r?\n""".toRegex())) //.map { it.trim() })
+                texts.addAll(text.split("""\r?\n""".toRegex()))
                 hangingText.setLength(0)
             }
             if (child is Element) {
@@ -102,11 +101,11 @@ class Formatter(private val doc: Document, val language: Language, private val s
                         val (group1, group2) = it.destructured
                         "$group1 $group2"
                     }
-                texts.addAll(text.split("""\r?\n""".toRegex())) //.map { it.trim() })
+                texts.addAll(text.split("""\r?\n""".toRegex()))
 
                 if (hangingText.isNotBlank()) {
                     val text = cleanParagraphText(hangingText.toString())
-                    texts.addAll(text.split("""\r?\n""".toRegex())) //.map { it.trim() })
+                    texts.addAll(text.split("""\r?\n""".toRegex()))
                 }
             }
         }

@@ -5,7 +5,8 @@ import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
 
-val REGEX_BAD_TAGS = """^side$|combx|retweet|mediaarticlerelated|menucontainer|navbar|partner-gravity-ad|video-full-transcript|storytopbar-bucket|utility-bar|inline-share-tools|comment|PopularQuestions|contact|foot|footer|Footer|footnote|cnn_strycaptiontxt|cnn_html_slideshow|cnn_strylftcntnt|links|meta$|shoutbox|sponsor|tags|socialnetworking|socialNetworking|cnnStryHghLght|cnn_stryspcvbx|^inset$|pagetools|post-attributes|welcome_form|contentTools2|the_answers|communitypromo|runaroundLeft|subscribe|vcard|articleheadings|date|^print$|popup|author-dropdown|tools|socialtools|byline|konafilter|KonaFilter|breadcrumbs|^fn$|wp-caption-text|legende|ajoutVideo|timestamp|js_replies""".toRegex(RegexOption.IGNORE_CASE)
+private val REGEX_BAD_TAGS = """^side$|combx|retweet|mediaarticlerelated|menucontainer|navbar|partner-gravity-ad|video-full-transcript|storytopbar-bucket|utility-bar|inline-share-tools|comment|PopularQuestions|contact|foot|footer|Footer|footnote|cnn_strycaptiontxt|cnn_html_slideshow|cnn_strylftcntnt|links|meta$|shoutbox|sponsor|tags|socialnetworking|socialNetworking|cnnStryHghLght|cnn_stryspcvbx|^inset$|pagetools|post-attributes|welcome_form|contentTools2|the_answers|communitypromo|runaroundLeft|subscribe|vcard|articleheadings|date|^print$|popup|author-dropdown|tools|socialtools|byline|konafilter|KonaFilter|breadcrumbs|^fn$|wp-caption-text|legende|ajoutVideo|timestamp|js_replies""".toRegex(RegexOption.IGNORE_CASE)
+private val GRAVITY_USED_ALREADY = "grv-usedalready"
 
 class Cleaner(private val doc: Document, private val language: Language) {
     private var d = doc
@@ -107,33 +108,33 @@ class Cleaner(private val doc: Document, private val language: Language) {
     }
 
     var count = 0
+    var e = 0
     private fun elementToParagraph(doc: Document, tagName: String) {
-//        println (doc.html())
         val elements = doc.select(tagName)
         val tags = listOf("a", "blockquote", "dl", "div", "img", "ol", "p", "pre", "table", "ul")
-        println("===divs ${elements.size}")
-        println("p 1 ${doc.select("p").size}")
+        println("divsToPara ${elements.size}")
         for (element in elements) {
             // TODO: can we find the first that isn't this element --- this is a performance issue as is!
             val items = element.find(tags.joinToString(", "))
             if (items.isEmpty()) {
-                count += 1
+                println("${count++} '${element.html()}' ")
                 val html = element.html()
                 element.tagName("p")
                 element.html(html)
-                println(count)
+
             } else {
                 val replaceNodes = getReplacementNodes(element)
-//                println("REPN ${replaceNodes.size}")
+                println("replace nodes ${replaceNodes.size}")
                 val pReplacementElements = mutableListOf<Element>()
                 for (rNode in replaceNodes) {
-                    if (rNode is TextNode && rNode.text().isNotBlank()) {
+                    if (rNode is TextNode && rNode.text().isNotEmpty()) {
+                        println("-"+e++)
                         pReplacementElements.add(Element("p").html(rNode.text()))
                     } else if (rNode is Element) {
-                        if (rNode.html().isNotBlank())
+                        if (rNode.html().isNotEmpty()) {
+                            println("-"+e++)
                             pReplacementElements.add(Element("p").html(rNode.html()))
-                        else
-                            println("============EMPTY NODE========")
+                        }
                     } else {
                         println("ERROR - should not get here")
                     }
@@ -142,25 +143,68 @@ class Cleaner(private val doc: Document, private val language: Language) {
                 element.remove()
             }
         }
-        println()
-        println("p 2 ${doc.select("p").size}")
-
     }
 
     private fun getReplacementNodes(div: Node): List<Node> {
         val children = div.childNodes()
-//        println("======>>${children.size}")
         val nodesToReturn = mutableListOf<Node>()
-        val replacmentText = mutableListOf<String>()
+        val nodesToRemove = mutableListOf<Node>()
+        // really replacement HTML
+        val replacmentText = mutableListOf<String>() // could be string buffer
+        val isGravityUsed = { e: Element -> e.attr(GRAVITY_USED_ALREADY) == "yes" }
+        val setGravityUsed = { e: Element -> e.attr(GRAVITY_USED_ALREADY, "yes") }
         for (kid in children) {
             if (kid is Element && kid.tagName() == "p" && replacmentText.isNotEmpty()) {
-//                println("---->HERE - NOT IMPLEMENTED")
+                val html = replacmentText.joinToString("")
+                println("p with replacement $html")
+                nodesToReturn.add(Element("p").html(html))
+                replacmentText.clear()
+                nodesToReturn.add(kid)
             } else if (kid is TextNode) {
-//                println("---->HERE TEXT NODE - NOT IMPLEMENTED")
+                val kidText = kid.text()
+                    .replace("""\n""", "\n\n")
+                    .replace("""\t""", "")
+                    .replace("""^\s+$""", "")
+                if (kidText.length > 1) {
+                    println("text with replace text")
+                    var prevSibling = kid.previousSibling()
+                    while (prevSibling is Element && prevSibling.tagName() == "a" && !isGravityUsed(prevSibling)) {
+                        println("prev sib handling")
+                        val outerHtml = " ${prevSibling.outerHtml()} "
+                        replacmentText.add(outerHtml)
+                        nodesToRemove.add(prevSibling)
+                        setGravityUsed(prevSibling)
+                        prevSibling = prevSibling.previousSibling()
+                    }
+
+                    replacmentText.add(kidText)
+
+                    var nextSibling = kid.nextSibling()
+                    while (nextSibling is Element && nextSibling.tagName() == "a" && !isGravityUsed(nextSibling)) {
+                        println("next sib handling")
+                        val outerHtml = " ${nextSibling.outerHtml()} "
+                        replacmentText.add(outerHtml)
+                        nodesToRemove.add(nextSibling)
+                        setGravityUsed(nextSibling)
+                        nextSibling = nextSibling.nextSibling()
+                    }
+                }
             } else {
                 nodesToReturn.add(kid)
             }
         }
+
+        if (replacmentText.isNotEmpty()) {
+            println("finish replacement text")
+            val html = replacmentText.joinToString("")
+            nodesToReturn.add(Element("p").html(html))
+            replacmentText.clear()
+        }
+
+        for (node in nodesToRemove) {
+            node.remove()
+        }
+
         return nodesToReturn
     }
 }
