@@ -6,6 +6,7 @@ import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
 
 private val REGEX_BAD_TAGS = """^side$|combx|retweet|mediaarticlerelated|menucontainer|navbar|partner-gravity-ad|video-full-transcript|storytopbar-bucket|utility-bar|inline-share-tools|comment|PopularQuestions|contact|foot|footer|Footer|footnote|cnn_strycaptiontxt|cnn_html_slideshow|cnn_strylftcntnt|links|meta$|shoutbox|sponsor|tags|socialnetworking|socialNetworking|cnnStryHghLght|cnn_stryspcvbx|^inset$|pagetools|post-attributes|welcome_form|contentTools2|the_answers|communitypromo|runaroundLeft|subscribe|vcard|articleheadings|date|^print$|popup|author-dropdown|tools|socialtools|byline|konafilter|KonaFilter|breadcrumbs|^fn$|wp-caption-text|legende|ajoutVideo|timestamp|js_replies""".toRegex(RegexOption.IGNORE_CASE)
+private val REGEX_NAV = """["#.'-_]+nav[-_"']+""".toRegex(RegexOption.IGNORE_CASE)
 private val GRAVITY_USED_ALREADY = "grv-usedalready"
 
 class Cleaner(private val doc: Document, private val language: Language) {
@@ -21,6 +22,7 @@ class Cleaner(private val doc: Document, private val language: Language) {
             nodeRemovalRules = listOf(
                 TraversalRules::removeCommentsTravRule,
                 TraversalRules::removeBadTagsTravRule,
+                TraversalRules::removeNavigationElements,
                 (TraversalRules::removeMatching)("""^caption$""".toRegex()),
                 (TraversalRules::removeMatching)(""" google """.toRegex()),
                 (TraversalRules::removeMatching)("""^[^entry-]more.*$""".toRegex()),
@@ -128,11 +130,11 @@ class Cleaner(private val doc: Document, private val language: Language) {
                 val pReplacementElements = mutableListOf<Element>()
                 for (rNode in replaceNodes) {
                     if (rNode is TextNode && rNode.text().isNotEmpty()) {
-                        println("-"+e++)
+                        println("-" + e++)
                         pReplacementElements.add(Element("p").html(rNode.text()))
                     } else if (rNode is Element) {
                         if (rNode.html().isNotEmpty()) {
-                            println("-"+e++)
+                            println("-" + e++)
                             pReplacementElements.add(Element("p").html(rNode.html()))
                         }
                     } else {
@@ -248,6 +250,14 @@ object TraversalRules {
     fun removeCommentsTravRule(node: Node): Boolean {
         return node.nodeName() == "#comment"
     }
+
+    fun removeNavigationElements(node: Node): Boolean {
+        if (node !is Element) return false
+        return listOf("div", "li", "ul", "ol").contains(node.tagName()) && (
+            REGEX_NAV.containsMatchIn(node.attr("class")) ||
+                REGEX_NAV.containsMatchIn(node.attr("id")))
+    }
+
 
     fun removeBadTagsTravRule(node: Node) =
         REGEX_BAD_TAGS.containsMatchIn(node.attr("id")) ||

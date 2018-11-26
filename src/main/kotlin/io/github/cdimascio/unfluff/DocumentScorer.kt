@@ -199,8 +199,7 @@ class Heuristics(private val scorer: DocumentScorer, private val stopWords: Stop
                 val linkWords = linkText.split(" ")
 
                 val percentLinkWords = linkWords.size.toDouble() / words.size.toDouble()
-                val linkBoost = if (links.size > 1) 5 /* 5.938 */else 1
-                val score = percentLinkWords * (links.size * linkBoost)
+                val score = percentLinkWords * links.size
 
                 println("${linkWords.size} / ${words.size} = $percentLinkWords (percentLinkWords) |  $percentLinkWords * ${links.size} = $score (score)")
                 return score >= 1.0

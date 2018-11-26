@@ -127,7 +127,7 @@ class Extractor(private val doc: Document, private val language: Language = Lang
         return cleanTitle(rawTitle(), listOf("|", " - ", "»"))
     }
 
-    private fun rawTitle(): String? {
+    private fun rawTitle(): String {
 
         val candidates = mutableListOf<Element>()
         candidates.addAll(doc.select("""meta[property='og:title']""").toList())
@@ -148,11 +148,11 @@ class Extractor(private val doc: Document, private val language: Language = Lang
 
         var text: String? = null
         for (c in candidates) {
-            text = c.attr("content").cleanse()
-            if (text.isBlank()) text = c.text().cleanse()
-            if (text.isNotBlank()) return text
+            text = c.attr("content")
+            if (text.isBlank()) text = c.text()
+            if (text.isNotBlank()) break
         }
-        return text
+        return text?.cleanse() ?: ""
     }
 
     private fun cleanTitle(title: String?, delimiters: List<String> = emptyList()): String {
