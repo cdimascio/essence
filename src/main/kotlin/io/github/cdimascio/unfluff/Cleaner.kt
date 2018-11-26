@@ -118,7 +118,7 @@ class Cleaner(private val doc: Document, private val language: Language) {
             val items = element.find(tags.joinToString(", "))
             if (items.isEmpty()) {
                 count += 1
-                val html = element.outerHtml()
+                val html = element.html()
                 element.tagName("p")
                 element.html(html)
                 println(count)
