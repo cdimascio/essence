@@ -7,7 +7,6 @@ import java.util.stream.Collectors
 class StopWords private constructor(private val stopWords: List<String>) {
     companion object {
         fun load(language: Language = Language.en): StopWords {
-            println("./stopwords/stopwords-$language")
             val resource = ClassLoader.getSystemResource("./stopwords/stopwords-$language.txt").toURI()
             val words = Files.lines(Paths.get(resource))
             return StopWords(words.map {

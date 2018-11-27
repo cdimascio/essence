@@ -5,8 +5,8 @@ import org.jsoup.nodes.Element
 
 private val REGEX_COPYRIGHT = """.*?©(\s*copyright)?([^,;:.|\r\n]+).*""".toRegex(RegexOption.IGNORE_CASE)
 
-class Extractor(private val doc: Document, private val language: Language = Language.en, private val stopWords: StopWords) {
-    private val formatter = Formatter(this.doc, this.language, this.stopWords)
+class Extractor(private val doc: Document) {
+//    private val formatter = Formatter(stopWords)
 
     fun date(): String? {
         val candidates = doc.select("""
@@ -279,7 +279,7 @@ class Extractor(private val doc: Document, private val language: Language = Lang
         return node?.let{ gatherLinks(node) } ?: emptyList()
     }
 
-    fun text(node: Element?): String {
+    fun text(node: Element?, formatter: Formatter): String {
         return node?.let {
             formatter.format(node)
         } ?: ""

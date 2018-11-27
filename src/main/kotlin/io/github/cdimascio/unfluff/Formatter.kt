@@ -1,11 +1,10 @@
 package io.github.cdimascio.unfluff
 
-import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
 
-class Formatter(private val doc: Document, val language: Language, private val stopWords: StopWords) {
+class Formatter(private val stopWords: StopWords) {
     fun format(node: Element): String {
         // TODO: Combine the following into a single pass
         removeNegativescoresNodes(node)

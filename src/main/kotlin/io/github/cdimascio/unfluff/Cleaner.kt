@@ -9,8 +9,7 @@ private val REGEX_BAD_TAGS = """^side$|combx|retweet|mediaarticlerelated|menucon
 private val REGEX_NAV = """["#.'-_]+nav[-_"']+""".toRegex(RegexOption.IGNORE_CASE)
 private val GRAVITY_USED_ALREADY = "grv-usedalready"
 
-class Cleaner(private val doc: Document, private val language: Language) {
-    private var d = doc
+class Cleaner(private val doc: Document) {
     fun clean(): CleanDocument {
         removeBodyClasses()
         cleanArticleTags()
@@ -32,18 +31,18 @@ class Cleaner(private val doc: Document, private val language: Language) {
             nodeModificationRules = listOf(
                 TraversalRules::correctErrantLineBreaks
             ))
-            .applyRules(d)
+            .applyRules(doc)
             .purgeMarkedNodes()
         cleanParaSpans()
         cleanUnderlines()
 
-        elementToParagraph(d, "div")
+        elementToParagraph(doc, "div")
 
-//        elementToParagraph(d, "span")
+//        elementToParagraph(doc, "span")
 
         return CleanDocument(
-            text = d.html(),
-            doc = d
+            text = doc.html(),
+            doc = doc
         )
     }
 
@@ -51,14 +50,14 @@ class Cleaner(private val doc: Document, private val language: Language) {
      * Remove all classes
      */
     private fun removeBodyClasses() {
-        val body = d.body()
+        val body = doc.body()
         body.classNames().forEach {
             body.removeClass(it)
         }
     }
 
     private fun cleanArticleTags() {
-        val articles = d.getElementsByTag("article")
+        val articles = doc.getElementsByTag("article")
         articles.forEach {
             it.removeAttr("id")
             it.removeAttr("name")
@@ -67,7 +66,7 @@ class Cleaner(private val doc: Document, private val language: Language) {
     }
 
     private fun cleanEmTags() {
-        val ems = d.getElementsByTag("em")
+        val ems = doc.getElementsByTag("em")
         ems.forEach {
             val images = it.find("img")
             if (images.isEmpty()) {
@@ -77,7 +76,7 @@ class Cleaner(private val doc: Document, private val language: Language) {
     }
 
     private fun cleanCodeBlocks() {
-        val nodes = d.select(
+        val nodes = doc.select(
             "[class*='highlight-'], pre code, code, pre, ul.task-list"
         )
         nodes.forEach {
@@ -86,25 +85,25 @@ class Cleaner(private val doc: Document, private val language: Language) {
     }
 
     private fun removeDropCaps() {
-        val nodes = d.select("span[class~=dropcap], span[class~=drop_cap]")
+        val nodes = doc.select("span[class~=dropcap], span[class~=drop_cap]")
         return nodes.forEach {
             it.unwrap()
         }
     }
 
     private fun removeScriptsStyles() {
-        d.getElementsByTag("script").remove()
-        d.getElementsByTag("style").remove()
+        doc.getElementsByTag("script").remove()
+        doc.getElementsByTag("style").remove()
     }
 
     private fun cleanParaSpans() {
-        d.select("p span").forEach {
+        doc.select("p span").forEach {
             it.unwrap()
         }
     }
 
     private fun cleanUnderlines() {
-        d.select("u").forEach {
+        doc.select("u").forEach {
             it.unwrap()
         }
     }

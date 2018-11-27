@@ -2,7 +2,6 @@ package io.github.cdimascio.unfluff
 
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
-import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
 
 object TraversalHelpers {

@@ -2,12 +2,14 @@ package io.github.cdimascio.unfluff
 
 import org.jsoup.Jsoup
 
-class UnfluffParser(private val html: String, private val language: Language = Language.en) {
+class UnfluffParser(private val html: String, language: Language? = null) {
     private val document = Jsoup.parse(this.html)
-    private val stopWords = StopWords.load(language)
-    private val cleaner = Cleaner(document, this.language)
-    private val extractor = Extractor(document, this.language, stopWords)
-    private val scorer = DocumentScorer(document, language, stopWords)
+    private val cleaner = Cleaner(document)
+    private val extractor = Extractor(document)
+    private val language = Language.from(extractor.lang())
+    private val stopWords = StopWords.load(this.language)
+    private val scorer = DocumentScorer(document, stopWords)
+    private val formatter = Formatter(stopWords)
 
     fun parse(): UnfluffDocument {
         println("---start 1 ${document.select("div").size}")
@@ -22,18 +24,17 @@ class UnfluffParser(private val html: String, private val language: Language = L
         val image = extractor.image()
         val tags = extractor.tags()
         val canonicalLink = extractor.canonicalLink()
-        val language = extractor.lang()
         val keywords = extractor.keywords()
 
         println("---start 2 ${document.select("div").size}")
         // clean and score document before extracting text, links and video
         cleaner.clean()
         println("---start 3 ${document.select("div").size}")
-        val node = scorer.score()
+        val topNode = scorer.score()
 
-        val links = extractor.links(node)
-        val videos = extractor.videos(node)
-        val text = extractor.text(node)
+        val links = extractor.links(topNode)
+        val videos = extractor.videos(topNode)
+        val text = extractor.text(topNode, formatter)
 
         return UnfluffDocument(
             authors = authors,
@@ -43,7 +44,7 @@ class UnfluffParser(private val html: String, private val language: Language = L
             publisher = publisher,
             date = date,
             copyright = copyright,
-            language = language,
+            language = language.name,
             text = text,
             favicon = favicon,
             image = image,
@@ -52,14 +53,5 @@ class UnfluffParser(private val html: String, private val language: Language = L
             keywords = keywords,
             tags = tags
         )
-    }
-
-
-    fun topNode() {
-
-    }
-
-    fun cleanedDoc(): CleanDocument {
-        return Cleaner(document, language).clean()
     }
 }

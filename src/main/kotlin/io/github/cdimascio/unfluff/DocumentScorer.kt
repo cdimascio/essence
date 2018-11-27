@@ -5,10 +5,10 @@ import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
 
-class DocumentScorer(private val doc: Document, private val language: Language, private val stopWords: StopWords) {
+class DocumentScorer(private val doc: Document, private val stopWords: StopWords) {
     private var scored = false
     private val heuristics = Heuristics(this, stopWords)
-    private val filterByScorer = FilterScoredNodes(language, stopWords, heuristics)
+    private val filterByScorer = FilterScoredNodes(stopWords, heuristics)
 
     private var count = 0
     fun score(): Element? {
@@ -85,7 +85,7 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
 
         scored = true
         val topNode = identifyTopNode(parentNodes)
-        filterByScorer.clean(topNode, this)
+        filterByScorer.clean(topNode)
         return topNode
     }
 
@@ -141,16 +141,16 @@ class DocumentScorer(private val doc: Document, private val language: Language, 
      **/
     private fun isBoostable(node: Node): Boolean {
         val previousSiblings = TraversalHelpers.getAllPreviousElementSiblings(node)
-        val MinimumStopwordCount = 5
-        val MaxStepsawayFromNode = 3
+        val MIN_STOP_WORDS_COUNT = 5
+        val MAX_STEPS_FROM_NODE = 3
         for ((stepsAway, element) in previousSiblings.iterator().withIndex()) {
             if (element.tagName() == "p") {
-                if (stepsAway >= MaxStepsawayFromNode) {
+                if (stepsAway >= MAX_STEPS_FROM_NODE) {
                     return false
                 }
                 val text = element.text()
                 val stats = stopWords.statistics(text)
-                if (stats.stopWords.size > MinimumStopwordCount) {
+                if (stats.stopWords.size > MIN_STOP_WORDS_COUNT) {
                     return true
                 }
             }
@@ -209,8 +209,8 @@ class Heuristics(private val scorer: DocumentScorer, private val stopWords: Stop
     }
 }
 
-private class FilterScoredNodes(private val language: Language, private val stopWords: StopWords, private val heuristics: Heuristics) {
-    fun clean(element: Element?, scorer: DocumentScorer) {
+private class FilterScoredNodes(private val stopWords: StopWords, private val heuristics: Heuristics) {
+    fun clean(element: Element?) {
         if (element == null) return
 
         val isParagraphOrAnchor = { node: Element ->

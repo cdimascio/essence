@@ -15,7 +15,7 @@ class CleanerSpec {
         val document = Jsoup.parse(contents)
 
         assertEquals("magazine", document.body().attr("class").trim())
-        val cleaner = Cleaner(document, Language.en)
+        val cleaner = Cleaner(document)
         val cleaned = cleaner.clean().doc
 
         println(cleaned.html())
@@ -31,7 +31,7 @@ class CleanerSpec {
             "row post js_post_item status-published commented js_amazon_module",
             document.select("article").attr("class").trim()
         )
-        Cleaner(document, Language.en).clean()
+        Cleaner(document).clean()
 
         assertEquals(
             "", document.select("article").attr("class").trim()
@@ -45,7 +45,7 @@ class CleanerSpec {
 
         assertEquals(6, document.select("em").size)
 
-        Cleaner(document, Language.en).clean()
+        Cleaner(document).clean()
         assertEquals(0, document.select("em").size)
     }
 
@@ -55,7 +55,7 @@ class CleanerSpec {
         val document = Jsoup.parse(contents)
 
         assertEquals(40, document.select("script").size)
-        Cleaner(document, Language.en).clean()
+        Cleaner(document).clean()
         assertEquals(0, document.select("script").size)
     }
 
@@ -71,7 +71,7 @@ class CleanerSpec {
         assertEquals(18, origComments)
 
         val doc = Jsoup.parse(contents)
-        Cleaner(doc, Language.en).clean()
+        Cleaner(doc).clean()
 
         var comments = 0
         traverse(doc) {
@@ -83,7 +83,7 @@ class CleanerSpec {
     @Test
     fun replaceChildlessDivsWithPTags() {
         val doc = Jsoup.parse("<html><body><div>text1</div></body></html>")
-        Cleaner(doc, Language.en).clean()
+        Cleaner(doc).clean()
         assertEquals(0, doc.select("div").size)
         assertEquals(1, doc.select("p").size)
         assertEquals("text1", doc.select("p").text())
@@ -92,7 +92,7 @@ class CleanerSpec {
     @Test
     fun replaceChildlessDivsWithPTags2() {
         val doc = Jsoup.parse("<html><body><div>text1</div><div>more text</div></body></html>")
-        Cleaner(doc, Language.en).clean()
+        Cleaner(doc).clean()
         println(doc.html())
         assertEquals(0, doc.select("div").size)
         assertEquals(2, doc.select("p").size)
@@ -102,7 +102,7 @@ class CleanerSpec {
     @Test
     fun replacesUTagsWithPlainText() {
         val doc = Jsoup.parse("<html><body><u>text1</u></body></html>")
-        Cleaner(doc, Language.en).clean()
+        Cleaner(doc).clean()
         println(doc.html())
         println("====== ${doc.body().html()}")
         assertEquals(0, doc.select("u").size)
@@ -116,7 +116,7 @@ class CleanerSpec {
 
         assertEquals(1, doc.select("div.caption").size)
 
-        Cleaner(doc, Language.en).clean()
+        Cleaner(doc).clean()
 
         assertEquals(0, doc.select("div.caption").size)
     }
@@ -129,7 +129,7 @@ class CleanerSpec {
         val naughtyElmsOrig = doc.select(".retweet")
         assertEquals(2, naughtyElmsOrig.size)
 
-        Cleaner(doc, Language.en).clean()
+        Cleaner(doc).clean()
 
         val naughtyElms = doc.select(".retweet")
         assertEquals(0, naughtyElms.size)
@@ -140,7 +140,7 @@ class CleanerSpec {
         val contents = readFileFull("./fixtures/test_sec1.html")
         val doc = Jsoup.parse(contents)
 
-        Cleaner(doc, Language.en).clean()
+        Cleaner(doc).clean()
 
         val pElements = doc.select("p")
         println(pElements)
@@ -156,7 +156,7 @@ class CleanerSpec {
         val codeBlocksOrig = doc.select("code")
         assertEquals(26, codeBlocksOrig.size)
 
-        Cleaner(doc, Language.en).clean()
+        Cleaner(doc).clean()
 
         val codeBlocks = doc.select("code")
         assertEquals(0, codeBlocks.size)

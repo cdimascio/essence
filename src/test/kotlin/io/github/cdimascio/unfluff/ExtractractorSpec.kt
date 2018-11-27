@@ -14,7 +14,7 @@ class ExtractractorSpec {
     fun returnsABlankTitle() {
         val html = "<html><head><title></title></head></html>"
         val d = Jsoup.parse(html)
-        val title = Extractor(d, Language.en, stopWords).title()
+        val title = Extractor(d).title()
         assertEquals("", title)
     }
 
@@ -22,7 +22,7 @@ class ExtractractorSpec {
     fun returnsASimpleTitle() {
         val html = "<html><head><title>This is my page</title></head></html>"
         val d = Jsoup.parse(html)
-        val title = Extractor(d, Language.en, stopWords).title()
+        val title = Extractor(d).title()
         assertEquals("This is my page", title)
     }
 
@@ -30,7 +30,7 @@ class ExtractractorSpec {
     fun returnsASimpleChunkTitle() {
         val html = "<html><head><title>This is my page - mysite</title></head></html>"
         val d = Jsoup.parse(html)
-        val title = Extractor(d, Language.en, stopWords).title()
+        val title = Extractor(d).title()
         assertEquals("This is my page", title)
     }
 
@@ -38,7 +38,7 @@ class ExtractractorSpec {
     fun returnsSoftTitleWithoutTruncation() {
         val html = "<html><head><title>University Budgets: Where Your Fees Go | Top Universities</title></head></html>"
         val d = Jsoup.parse(html)
-        val title = Extractor(d, Language.en, stopWords).softTitle()
+        val title = Extractor(d).softTitle()
         assertEquals("University Budgets: Where Your Fees Go", title)
     }
 
@@ -46,7 +46,7 @@ class ExtractractorSpec {
     fun titlePrefersTheMetaTag() {
         val html = "<html><head><title>This is my page - mysite</title><meta property=\"og:title\" content=\"Open graph title\"></head></html>"
         val d = Jsoup.parse(html)
-        val title = Extractor(d, Language.en, stopWords).title()
+        val title = Extractor(d).title()
         assertEquals("Open graph title", title)
     }
 
@@ -54,7 +54,7 @@ class ExtractractorSpec {
     fun fallsbackToTitleIfEmptyMetatag() {
         val html = "<html><head><title>This is my page - mysite</title><meta property=\"og:title\" content=\"\"></head></html>"
         val d = Jsoup.parse(html)
-        val title = Extractor(d, Language.en, stopWords).title()
+        val title = Extractor(d).title()
         assertEquals("This is my page", title)
     }
 
@@ -62,7 +62,7 @@ class ExtractractorSpec {
     fun returnsAnotherSimpleTitleChunk() {
         val html = "<html><head><title>coolsite.com: This is my page</title></head></html>"
         val d = Jsoup.parse(html)
-        val title = Extractor(d, Language.en, stopWords).title()
+        val title = Extractor(d).title()
         assertEquals("This is my page", title)
     }
 
@@ -70,7 +70,7 @@ class ExtractractorSpec {
     fun returnsAnotherSimpleTitleChunkWithoutJunk() {
         val html = "<html><head><title>coolsite.com: &#65533; This&#65533; is my page</title></head></html>"
         val d = Jsoup.parse(html)
-        val title = Extractor(d, Language.en, stopWords).title()
+        val title = Extractor(d).title()
         assertEquals("This is my page", title)
     }
 
@@ -78,7 +78,7 @@ class ExtractractorSpec {
     fun returnsTheFirstTitle() {
         val html = "<html><head><title>This is my page</title></head><svg xmlns=\"http://www.w3.org/2000/svg\"><title>svg title</title></svg></html>"
         val d = Jsoup.parse(html)
-        val title = Extractor(d, Language.en, stopWords).title()
+        val title = Extractor(d).title()
         assertEquals("This is my page", title)
     }
 
@@ -86,7 +86,7 @@ class ExtractractorSpec {
     fun missingFavicon() {
         val html = "<html><head><title></title></head></html>"
         val d = Jsoup.parse(html)
-        val favicon = Extractor(d, Language.en, stopWords).favicon()
+        val favicon = Extractor(d).favicon()
         assertEquals("", favicon)
     }
 
@@ -94,7 +94,7 @@ class ExtractractorSpec {
     fun returnsTheArticlePublishedMetaDate() {
         val html = "<html><head><meta property=\"article:published_time\" content=\"2014-10-15T00:01:03+00:00\" /></head></html>"
         val d = Jsoup.parse(html)
-        val date = Extractor(d, Language.en, stopWords).date()
+        val date = Extractor(d).date()
         assertEquals("2014-10-15T00:01:03+00:00", date)
     }
 
@@ -102,7 +102,7 @@ class ExtractractorSpec {
     fun returnsTheArticleDublinCoreMetaDate() {
         val html = "<html><head><meta name=\"DC.date.issued\" content=\"2014-10-15T00:01:03+00:00\" /></head></html>"
         val d = Jsoup.parse(html)
-        val date = Extractor(d, Language.en, stopWords).date()
+        val date = Extractor(d).date()
         assertEquals("2014-10-15T00:01:03+00:00", date)
     }
 
@@ -110,7 +110,7 @@ class ExtractractorSpec {
     fun returnsTheDateInTheTimeElement() {
         val html = "<html><head></head><body><time>24 May, 2010</time></body></html>"
         val d = Jsoup.parse(html)
-        val date = Extractor(d, Language.en, stopWords).date()
+        val date = Extractor(d).date()
         assertEquals( "24 May, 2010", date)
     }
 
@@ -118,7 +118,7 @@ class ExtractractorSpec {
     fun returnsTheDateInTheTimeElementDatetimeAttribute() {
         val html = "<html><head></head><body><time datetime=\"2010-05-24T13:47:52+0000\">24 May, 2010</time></body></html>"
         val d = Jsoup.parse(html)
-        val date = Extractor(d, Language.en, stopWords).date()
+        val date = Extractor(d).date()
         assertEquals( "2010-05-24T13:47:52+0000", date)
     }
 
@@ -126,7 +126,7 @@ class ExtractractorSpec {
     fun returnsNothingIfDateEqualsNull() {
         val html = "<html><head><meta property=\"article:published_time\" content=\"null\" /></head></html>"
         val d = Jsoup.parse(html)
-        val date = Extractor(d, Language.en, stopWords).date()
+        val date = Extractor(d).date()
         assertEquals( null, date)
     }
 
@@ -134,7 +134,7 @@ class ExtractractorSpec {
     fun returnsTheCopyrightLinElement() {
         val html = "<html><head></head><body><div>Some stuff</div><ul><li class='copyright'><!-- // some garbage -->© 2016 The World Bank Group, All Rights Reserved.</li></ul></body></html>"
         val d = Jsoup.parse(html)
-        val copyright = Extractor(d, Language.en, stopWords).copyright()
+        val copyright = Extractor(d).copyright()
         assertEquals( "2016 The World Bank Group", copyright)
     }
 
@@ -142,7 +142,7 @@ class ExtractractorSpec {
     fun returnsTheCopyrightFoundInText() {
         val html = "<html><head></head><body><div>Some stuff</div><ul>© 2016 The World Bank Group, All Rights Reserved\nSome garbage following</li></ul></body></html>"
         val d = Jsoup.parse(html)
-        val copyright = Extractor(d, Language.en, stopWords).copyright()
+        val copyright = Extractor(d).copyright()
         assertEquals( "2016 The World Bank Group", copyright)
     }
 
@@ -150,7 +150,7 @@ class ExtractractorSpec {
     fun returnsNothingIfNoCopyrightInText() {
         val html = "<html><head></head><body><div>Some stuff</div><ul>© 2016 The World Bank Group, All Rights Reserved\nSome garbage following</li></ul></body></html>"
         val d = Jsoup.parse(html)
-        val copyright = Extractor(d, Language.en, stopWords).copyright()
+        val copyright = Extractor(d).copyright()
         assertEquals( "2016 The World Bank Group", copyright)
     }
 
@@ -158,7 +158,7 @@ class ExtractractorSpec {
     fun returnsTheArticlePublishedMetaAuthor() {
         val html = "<html><head><meta property=\"article:author\" content=\"Joe Bloggs\"/></head></html>"
         val d = Jsoup.parse(html)
-        val authors = Extractor(d, Language.en, stopWords).authors()
+        val authors = Extractor(d).authors()
         assertTrue( authors.contains("Joe Bloggs"))
     }
 
@@ -166,7 +166,7 @@ class ExtractractorSpec {
     fun returnsTheMetaAuthor() {
         val html = "<html><head><meta property=\"article:author\" content=\"Sarah Smith\" /><meta name=\"author\" content=\"Joe Bloggs\" /></head></html>"
         val d = Jsoup.parse(html)
-        val authors = Extractor(d, Language.en, stopWords).authors()
+        val authors = Extractor(d).authors()
         assertTrue( authors.contains("Joe Bloggs") && authors.contains("Sarah Smith"))
     }
 
@@ -174,7 +174,7 @@ class ExtractractorSpec {
     fun returnsTheNamedAuthorInTheTextAsFallback() {
         val html = "\"<html><head></head><body><span class=\"author\"><a href=\"/author/gary-trust-6318\" class=\"article__author-link\">Gary Trust</a></span></body></html>\""
         val d = Jsoup.parse(html)
-        val authors = Extractor(d, Language.en, stopWords).authors()
+        val authors = Extractor(d).authors()
         assertTrue( authors.contains("Gary Trust"))
     }
 
@@ -182,7 +182,7 @@ class ExtractractorSpec {
     fun returnsTheMetaAuthorButIgnoreNullValue() {
         val html = """"<html><head><meta property="article:author" content="null" /><meta name="author" content="Joe Bloggs" /></head></html>""""
         val d = Jsoup.parse(html)
-        val authors = Extractor(d, Language.en, stopWords).authors()
+        val authors = Extractor(d).authors()
         assertTrue( authors.contains("Joe Bloggs"))
         assertEquals(1, authors.size)
         assertTrue( !authors.contains("null"))
@@ -192,7 +192,7 @@ class ExtractractorSpec {
     fun returnsTheMetaPublisher() {
         val html = """"<html><head><meta property="og:site_name" content="Polygon" /><meta name="author" content="Griffin McElroy" /></head></html>"""
         val d = Jsoup.parse(html)
-        val publisher = Extractor(d, Language.en, stopWords).publisher()
+        val publisher = Extractor(d).publisher()
         assertEquals("Polygon", publisher)
     }
 
@@ -200,7 +200,7 @@ class ExtractractorSpec {
     fun returnsNothingIfPublisherEqualsNull() {
         val html = """<html><head><meta property="og:site_name" content="null" /></head></html>"""
         val d = Jsoup.parse(html)
-        val publisher = Extractor(d, Language.en, stopWords).publisher()
+        val publisher = Extractor(d).publisher()
         assertNull(publisher)
     }
 
@@ -208,7 +208,7 @@ class ExtractractorSpec {
     fun returnNothingIfImageEqualsNull() {
         val html = """<html><head><meta property="og:image" content="null" /></head></html>"""
         val d = Jsoup.parse(html)
-        val image = Extractor(d, Language.en, stopWords).image()
+        val image = Extractor(d).image()
         println(image)
         assertEquals("", image)
     }
