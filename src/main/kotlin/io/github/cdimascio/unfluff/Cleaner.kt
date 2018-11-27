@@ -36,9 +36,7 @@ class Cleaner(private val doc: Document) {
         cleanParaSpans()
         cleanUnderlines()
 
-        elementToParagraph(doc, "div")
-
-//        elementToParagraph(doc, "span")
+        elementToParagraph(doc, listOf("div", "span"))
 
         return CleanDocument(
             text = doc.html(),
@@ -110,8 +108,8 @@ class Cleaner(private val doc: Document) {
 
     var count = 0
     var e = 0
-    private fun elementToParagraph(doc: Document, tagName: String) {
-        val elements = doc.select(tagName)
+    private fun elementToParagraph(doc: Document, tagNames: List<String>) {
+        val elements = doc.select(tagNames.joinToString(","))
         val tags = listOf("a", "blockquote", "dl", "div", "img", "ol", "p", "pre", "table", "ul")
         println("divsToPara ${elements.size}")
         for (element in elements) {
