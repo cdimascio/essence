@@ -3,7 +3,12 @@
 
 An automatic web page content extractor for **Kotlin** and **Java**.
 
-Given an HTML document, **essence** automatically identifies and extracts the main text content and more...
+_Given an HTML document, **essence** automatically identifies and extracts the main text content and more..._
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cdimascio/essence/master/assets/essence.png" width="550px"/>
+</p>
+
 
 This library is heavily influenced by [unfluff-node0(https://github.com/ageitgey/node-unfluff)
 
@@ -14,8 +19,8 @@ This library is heavily influenced by [unfluff-node0(https://github.com/ageitgey
 ```Java
 import io.github.cdimascio.essence.Essence;
 
-String data = Essence.extract(html)
-println(data.getText())
+String data = Essence.extract(html);
+System.out.println(data.getText());
 ```
 
 **Kotlin**
@@ -27,7 +32,7 @@ println(data.text)
 
 ## Install
 
-Maven
+**Maven**
 
 ```xml
 <dependency>
@@ -38,7 +43,7 @@ Maven
 </dependency>
 ```
 
-Gradlew
+**Gradle**
 
 ```groovy
 compile 'io.github.cdimascio:essence:0.10.11'
