@@ -4,7 +4,7 @@
 
 An automatic web page content extractor for _Kotlin_ and _Java_.
 
-Given an HTML document, **essence** automatically identifies and extracts the main text content and more.
+Given an HTML document, **essence** automatically extracts the main text content (and much more).
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/cdimascio/essence/master/assets/essence.png" width="450px"/>
