@@ -193,7 +193,7 @@ class EssenceSpec {
     fun checkFixture(site: String, fields: List<String>) {
         val html = readFileFull("./fixtures/test_$site.html")
         val orig = parseJson(readFileFull("./fixtures/test_$site.json"))
-        val data = Essence.extract(html, Language.en)
+        val data = Essence.extract(html)
 
         val expected = orig["expected"]
         for (field in fields) {
