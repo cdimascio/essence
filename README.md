@@ -1,11 +1,17 @@
 # essence
 
+![](https://travis-ci.org/cdimascio/unfluffer-j.svg?branch=master)![](https://camo.githubusercontent.com/208c24da54eea1ae12f8abed5dcc6b84b6ce8440/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d417061636865253230322e302d626c75652e737667)
 
-An automatic web page content extractor for **Kotlin** and **Java**.
+An automatic web page content extractor for _Kotlin_ and _Java_.
 
-Given an HTML document, **essence** automatically identifies and extracts the main text content and more...
+Given an HTML document, **essence** automatically extracts the main text content (and much more).
 
-This library is heavily influenced by [unfluff-node0(https://github.com/ageitgey/node-unfluff)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cdimascio/essence/master/assets/essence.png" width="450px"/>
+</p>
+
+
+_This library is heavily influenced by [node-unfluff](https://github.com/ageitgey/node-unfluff) and its [lineage](#credits)_
 
 ## Usage
 
@@ -14,8 +20,8 @@ This library is heavily influenced by [unfluff-node0(https://github.com/ageitgey
 ```Java
 import io.github.cdimascio.essence.Essence;
 
-String data = Essence.extract(html)
-println(data.getText())
+String data = Essence.extract(html);
+System.out.println(data.getText());
 ```
 
 **Kotlin**
@@ -23,11 +29,14 @@ println(data.getText())
 ```Kotlin
 val data = Essence.extract(html)
 println(data.text)
+// ...
 ```
+
+See [Extracted data elements](#extracted-data-elements) for additional extracted metadata.
 
 ## Install
 
-Maven
+**Maven**
 
 ```xml
 <dependency>
@@ -38,14 +47,13 @@ Maven
 </dependency>
 ```
 
-Gradlew
+**Gradle**
 
 ```groovy
 compile 'io.github.cdimascio:essence:0.10.11'
 ```
 
 ## Extracted data elements
-
 
 **essence** attempts to extract the following content:
 
@@ -65,6 +73,11 @@ compile 'io.github.cdimascio:essence:0.10.11'
 - `favicon` - The url of the document's [favicon](http://en.wikipedia.org/wiki/Favicon).
 - `links` - An array of links embedded within the article text. (text and href for each)
 
+
+## Credits
+- node-unfluff by [https://github.com/ageitgey](ageitgey)
+- python-goose by [Xavier Grangier](https://github.com/grangier)
+- goose by [Gravity Labs](https://github.com/GravityLabs)
 
 ## License
 
