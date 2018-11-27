@@ -34,7 +34,6 @@ class StopWordsSpec {
     }
 
     @Test
-    @Ignore
     fun handlesSpanish() {
         val stopwords = StopWords.load(Language.es)
         val stats = stopwords.statistics("este es rico")

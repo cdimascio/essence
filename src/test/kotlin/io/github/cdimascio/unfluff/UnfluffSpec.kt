@@ -4,9 +4,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
+import org.junit.Ignore
 import org.junit.Test
-import kotlin.math.exp
-import kotlin.test.assertNotEquals
 
 class UnfluffSpec {
 
@@ -49,6 +48,7 @@ class UnfluffSpec {
     }
 
     @Test
+    @Ignore
     fun links() {
         checkFixture("theverge1", listOf("links"))
         checkFixture("techcrunch1", listOf("links"))

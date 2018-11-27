@@ -1,8 +1,8 @@
 {
     "url": "http://www.mcsweeneys.net/articles/the-middle-managers-oath",
     "expected": {
-        "title": "",
-        "meta_description": "",
+        "title": "The Middle Manager’s Oath.",
+        "meta_description": "(To be recited by corporate managers and senior managers each morning while looking in a full-length mirror, topless, and flexing their biceps.) ...",
         "domain": "www.mcsweeneys.net",
         "final_url": "http://www.mcsweeneys.net/articles/the-middle-managers-oath",
         "cleaned_text": "I will empower my team to find their own solutions to those problems, which I do not want to deal with myself.",
