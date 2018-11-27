@@ -1,16 +1,16 @@
 # essence
 
 
-An automatic web page content extractor for **Kotlin** and **Java**.
+An automatic web page content extractor for _Kotlin_ and _Java_.
 
-_Given an HTML document, **essence** automatically identifies and extracts the main text content and more..._
+Given an HTML document, **essence** automatically identifies and extracts the main text content and more.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/cdimascio/essence/master/assets/essence.png" width="550px"/>
 </p>
 
 
-This library is heavily influenced by [unfluff-node0(https://github.com/ageitgey/node-unfluff)
+This library is heavily influenced by [node-unfluff](https://github.com/ageitgey/node-unfluff)
 
 ## Usage
 
@@ -70,6 +70,11 @@ compile 'io.github.cdimascio:essence:0.10.11'
 - `favicon` - The url of the document's [favicon](http://en.wikipedia.org/wiki/Favicon).
 - `links` - An array of links embedded within the article text. (text and href for each)
 
+
+## Credits
+- node-unfluff by [https://github.com/ageitgey](ageitgey)
+- python-goose by [Xavier Grangier](https://github.com/grangier)
+- goose by [Gravity Labs](https://github.com/GravityLabs)
 
 ## License
 
