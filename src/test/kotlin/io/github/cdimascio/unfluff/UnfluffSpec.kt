@@ -251,13 +251,4 @@ class UnfluffSpec {
             }
         }
     }
-
-//    @Test
-//    fun cleanDoc() {
-//        val html = htmlExample
-//        val doc = Unfluff.parse(html)
-//
-//        println("TITLE ${doc.title}\nTEXT ${doc.text}")
-//        assertEquals("Intel Science Talent Search", doc.title)
-//    }
 }
