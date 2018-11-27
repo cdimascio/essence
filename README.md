@@ -21,6 +21,8 @@ import io.github.cdimascio.essence.Essence;
 
 String data = Essence.extract(html);
 System.out.println(data.getText());
+System.out.println(data.getPublisher());
+// ...
 ```
 
 **Kotlin**
@@ -28,6 +30,8 @@ System.out.println(data.getText());
 ```Kotlin
 val data = Essence.extract(html)
 println(data.text)
+println(data.author)
+// ...
 ```
 
 ## Install
