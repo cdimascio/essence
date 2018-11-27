@@ -30,11 +30,18 @@ println(data.text)
 Maven
 
 ```xml
+<dependency>
+  <groupId>io.github.cdimascio</groupId>
+  <artifactId>essence</artifactId>
+  <version>0.10.11</version>
+  <type>pom</type>
+</dependency>
 ```
 
 Gradlew
 
 ```groovy
+compile 'io.github.cdimascio:essence:0.10.11'
 ```
 
 ## Extracted data elements
