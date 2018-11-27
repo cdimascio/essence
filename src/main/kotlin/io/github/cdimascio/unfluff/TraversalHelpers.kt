@@ -3,6 +3,7 @@ package io.github.cdimascio.unfluff
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 import org.jsoup.select.Elements
+import org.jsoup.select.NodeFilter
 
 object TraversalHelpers {
     fun getAllPreviousElementSiblings(node: Node): List<Element> {
@@ -32,4 +33,25 @@ fun Element.find(selector: String): Elements {
     val results = this.select(selector)
     results.remove(this)
     return results
+}
+
+fun Element.matchFirstElementTags(elementTags: List<String>, n: Int): Elements {
+    val elements = Elements()
+    var count = 0
+    this.filter(object : NodeFilter {
+        override fun tail(node: Node?, depth: Int): NodeFilter.FilterResult {
+            return NodeFilter.FilterResult.CONTINUE
+        }
+
+        override fun head(node: Node?, depth: Int): NodeFilter.FilterResult {
+            if (node is Element && elementTags.contains(node.tagName())) {
+                elements.add(node)
+                count += 1
+            }
+            return if (count == n) NodeFilter.FilterResult.STOP
+            else NodeFilter.FilterResult.CONTINUE
+        }
+
+    })
+    return elements
 }

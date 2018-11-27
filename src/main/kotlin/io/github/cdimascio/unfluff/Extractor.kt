@@ -6,8 +6,6 @@ import org.jsoup.nodes.Element
 private val REGEX_COPYRIGHT = """.*?©(\s*copyright)?([^,;:.|\r\n]+).*""".toRegex(RegexOption.IGNORE_CASE)
 
 class Extractor(private val doc: Document) {
-//    private val formatter = Formatter(stopWords)
-
     fun date(): String? {
         val candidates = doc.select("""
             meta[property='article:published_time'],

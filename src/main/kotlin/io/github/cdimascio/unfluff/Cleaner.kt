@@ -103,8 +103,7 @@ class Cleaner(private val doc: Document) {
         val tags = listOf("a", "blockquote", "dl", "div", "img", "ol", "p", "pre", "table", "ul")
         println("divsToPara ${elements.size}")
         for (element in elements) {
-            // TODO: can we find the first that isn't this element --- this is a performance issue as is!
-            val items = element.find(tags.joinToString(", "))
+            val items = element.matchFirstElementTags(tags, 1)
             if (items.isEmpty()) {
                 println("${count++} '${element.html()}' ")
                 val html = element.html()
