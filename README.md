@@ -10,7 +10,7 @@ Given an HTML document, **essence** automatically identifies and extracts the ma
 </p>
 
 
-This library is heavily influenced by [node-unfluff](https://github.com/ageitgey/node-unfluff)
+_This library is heavily influenced by [node-unfluff](https://github.com/ageitgey/node-unfluff) and its [lineage](#credits)_
 
 ## Usage
 
