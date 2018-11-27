@@ -31,7 +31,7 @@ println(data.text)
 // ...
 ```
 
-See [Extracted data elements](Extracted-data-elements)
+See [Extracted data elements](#extracted-data-elements) for additional extracted metadata.
 
 ## Install
 
