@@ -83,6 +83,11 @@ class EssenceSpec {
     }
 
     @Test
+    fun getsCleanedTextCnn2() {
+        checkFixture(site = "cnn2", fields = listOf("cleaned_text", "description"))
+    }
+
+    @Test
     fun getsCleanedTextMSN() {
         checkFixture(site = "msn1", fields = listOf("cleaned_text"))
     }
@@ -199,13 +204,15 @@ class EssenceSpec {
         for (field in fields) {
             when (field) {
                 "title" -> {
-                    assertEquals(expected["title"].asText(), data.title ?: "")
+                    assertEquals(expected["title"].asText(), data.title)
                 }
                 "cleaned_text" -> {
                     val origText = cleanOrigText(expected["cleaned_text"].asText())
-                    val newText = cleanTestingTest(data.text ?: "", origText)
+                    val newText = cleanTestingTest(data.text, origText)
                     assertNotEquals("text should not be null", "", newText)
-                    assertTrue(data.text?.length ?: 0 >= origText.length)
+                    assertTrue(data.text.length >= origText.length)
+                    println(origText)
+                    println(newText)
                     assertEquals(origText, newText)
                 }
                 "link" -> {

@@ -3,11 +3,19 @@ package io.github.cdimascio.essence.cleaners.rules
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 
-private val REGEX_BAD_TAGS = """^side$|combx|retweet|mediaarticlerelated|menucontainer|navbar|partner-gravity-ad|video-full-transcript|storytopbar-bucket|utility-bar|inline-share-tools|comment|PopularQuestions|contact|foot|footer|Footer|footnote|cnn_strycaptiontxt|cnn_html_slideshow|cnn_strylftcntnt|links|meta$|shoutbox|sponsor|tags|socialnetworking|socialNetworking|cnnStryHghLght|cnn_stryspcvbx|^inset$|pagetools|post-attributes|welcome_form|contentTools2|the_answers|communitypromo|runaroundLeft|subscribe|vcard|articleheadings|date|^print$|popup|author-dropdown|tools|socialtools|byline|konafilter|KonaFilter|breadcrumbs|^fn$|wp-caption-text|legende|ajoutVideo|timestamp|js_replies""".toRegex(RegexOption.IGNORE_CASE)
-private val REGEX_NAV = """["#.'-_]+nav[-_"']+""".toRegex(RegexOption.IGNORE_CASE)
+private val REGEX_BAD_TAGS = """sponsored|(["#.'\-_]+|^)ad[\-_"']+|adzone|^side$|combx|retweet|mediaarticlerelated|menucontainer|navbar|partner-gravity-ad|video-full-transcript|storytopbar-bucket|utility-bar|inline-share-tools|comment|PopularQuestions|contact|foot|footer|Footer|footnote|cnn_strycaptiontxt|cnn_html_slideshow|cnn_strylftcntnt|links|meta$|shoutbox|sponsor|tags|socialnetworking|socialNetworking|cnnStryHghLght|cnn_stryspcvbx|^inset$|pagetools|post-attributes|welcome_form|contentTools2|the_answers|communitypromo|runaroundLeft|subscribe|vcard|articleheadings|date|^print$|popup|author-dropdown|tools|socialtools|byline|konafilter|KonaFilter|breadcrumbs|^fn$|wp-caption-text|legende|ajoutVideo|timestamp|js_replies""".toRegex(RegexOption.IGNORE_CASE)
+private val REGEX_NAV = """(["#.'\-_]+|^)nav[\-_"']+""".toRegex(RegexOption.IGNORE_CASE)
+private val REGEX_SPONSORED = """sponsored|(["#.'\-_]+|^)ad[\-_"']+|adzone""".toRegex(RegexOption.IGNORE_CASE)
 
 object Rule {
 
+    fun removeSponsoredContent(node: Node): Boolean {
+        if (node !is Element) return false
+        return REGEX_SPONSORED.containsMatchIn(node.attr("class")) ||
+            node.attributes().filter {
+                REGEX_SPONSORED.containsMatchIn(it.value ?: "")
+            }.isNotEmpty()
+    }
     fun removeCommentsTravRule(node: Node): Boolean {
         return node.nodeName() == "#comment"
     }
@@ -20,8 +28,7 @@ object Rule {
     }
 
 
-    fun removeBadTagsTravRule(node: Node) =
-        REGEX_BAD_TAGS.containsMatchIn(node.attr("id")) ||
+    fun removeBadTagsTravRule(node: Node) = REGEX_BAD_TAGS.containsMatchIn(node.attr("id")) ||
             REGEX_BAD_TAGS.containsMatchIn(node.attr("class")) ||
             REGEX_BAD_TAGS.containsMatchIn(node.attr("name"))
 

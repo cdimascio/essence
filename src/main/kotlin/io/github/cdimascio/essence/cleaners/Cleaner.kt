@@ -23,11 +23,11 @@ class Cleaner(private val doc: Document) {
                 Rule::removeCommentsTravRule,
                 Rule::removeBadTagsTravRule,
                 Rule::removeNavigationElements,
+                Rule::removeSponsoredContent,
                 (Rule::removeMatching)("""^caption$""".toRegex()),
                 (Rule::removeMatching)(""" google """.toRegex()),
                 (Rule::removeMatching)("""^[^entry-]more.*$""".toRegex()),
-                (Rule::removeMatching)("""[^-]facebook""".toRegex()),
-                (Rule::removeMatching)("""facebook-broadcasting""".toRegex()),
+                (Rule::removeMatching)("""(["#.'\-_]+|^)(fb|facebook)[\-_"']+|facebook-broadcasting""".toRegex()),
                 (Rule::removeMatching)("""[^-]twitter""".toRegex())),
             nodeModificationRules = listOf(
                 Rule::correctErrantLineBreaks,

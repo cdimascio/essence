@@ -1,9 +1,11 @@
 package io.github.cdimascio.essence.words
 
 import io.github.cdimascio.essence.Language
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.util.stream.Collectors
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
+
 
 data class StopWordsStatistics(
     val wordCount: Int,
@@ -13,11 +15,24 @@ data class StopWordsStatistics(
 class StopWords private constructor(private val stopWords: List<String>) {
     companion object {
         fun load(language: Language = Language.en): StopWords {
-            val resource = ClassLoader.getSystemResource("./stopwords/stopwords-$language.txt").toURI()
-            val words = Files.lines(Paths.get(resource))
+            val ins = StopWords::class.java.getResourceAsStream("/stopwords/stopwords-$language.txt")
+            val words = readFromInputStream(ins)
             return StopWords(words.map {
                 it.trim().toLowerCase()
-            }.collect(Collectors.toList()))
+            })
+        }
+
+        @Throws(IOException::class)
+        private fun readFromInputStream(inputStream: InputStream): List<String> {
+            val words = mutableListOf<String>()
+            BufferedReader(InputStreamReader(inputStream)).use { br ->
+                var line = br.readLine()
+                while (line != null) {
+                    words += line
+                    line = br.readLine()
+                }
+            }
+            return words
         }
     }
 
