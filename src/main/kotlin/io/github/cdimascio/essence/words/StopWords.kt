@@ -1,10 +1,14 @@
 package io.github.cdimascio.essence.words
 
 import io.github.cdimascio.essence.Language
-import io.github.cdimascio.essence.StopWordsStatistics
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.stream.Collectors
+
+data class StopWordsStatistics(
+    val wordCount: Int,
+    val stopWords: List<String>
+)
 
 class StopWords private constructor(private val stopWords: List<String>) {
     companion object {
@@ -19,8 +23,8 @@ class StopWords private constructor(private val stopWords: List<String>) {
 
     fun statistics(content: String): StopWordsStatistics {
         val cleanedContent = removePunctuation(content)
-        val candidates = cleanedContent.split(" ").map{ it.toLowerCase() }
-        val stopWordsInContent = candidates.filter{ word -> stopWords.contains(word) }
+        val candidates = cleanedContent.split(" ").map { it.toLowerCase() }
+        val stopWordsInContent = candidates.filter { word -> stopWords.contains(word) }
         return StopWordsStatistics(
             wordCount = candidates.size,
             stopWords = stopWordsInContent

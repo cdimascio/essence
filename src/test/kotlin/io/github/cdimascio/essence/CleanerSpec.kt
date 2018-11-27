@@ -17,7 +17,7 @@ class CleanerSpec {
 
         assertEquals("magazine", document.body().attr("class").trim())
         val cleaner = Cleaner(document)
-        val cleaned = cleaner.clean().doc
+        val cleaned = cleaner.clean()
 
         assertEquals("", cleaned.body().attr("class").trim())
     }

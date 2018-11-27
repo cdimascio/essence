@@ -1,12 +1,5 @@
 package io.github.cdimascio.essence
 
-import org.jsoup.nodes.Document
-
-data class CleanDocument(
-    val text: String?,
-    val doc: Document
-)
-
 data class EssenceResult(
     val text: String?,
     val language: String?,
@@ -24,11 +17,6 @@ data class EssenceResult(
     val keywords: String,
     val tags: List<String>
 
-)
-
-data class StopWordsStatistics(
-    val wordCount: Int,
-    val stopWords: List<String>
 )
 
 data class Link(

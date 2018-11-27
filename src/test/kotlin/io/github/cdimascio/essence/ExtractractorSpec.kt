@@ -127,7 +127,7 @@ class ExtractractorSpec {
         val html = "<html><head><meta property=\"article:published_time\" content=\"null\" /></head></html>"
         val d = Jsoup.parse(html)
         val date = Extractor(d).date()
-        assertEquals( null, date)
+        assertEquals( "", date)
     }
 
     @Test
@@ -201,7 +201,7 @@ class ExtractractorSpec {
         val html = """<html><head><meta property="og:site_name" content="null" /></head></html>"""
         val d = Jsoup.parse(html)
         val publisher = Extractor(d).publisher()
-        assertNull(publisher)
+        assertEquals("", publisher)
     }
 
     @Test
