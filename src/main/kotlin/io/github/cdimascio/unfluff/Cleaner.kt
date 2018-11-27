@@ -12,7 +12,6 @@ private val GRAVITY_USED_ALREADY = "grv-usedalready"
 class Cleaner(private val doc: Document) {
     fun clean(): CleanDocument {
         removeBodyClasses()
-        cleanArticleTags()
         cleanEmTags()
         cleanCodeBlocks()
         removeDropCaps()
@@ -29,13 +28,13 @@ class Cleaner(private val doc: Document) {
                 (TraversalRules::removeMatching)("""facebook-broadcasting""".toRegex()),
                 (TraversalRules::removeMatching)("""[^-]twitter""".toRegex())),
             nodeModificationRules = listOf(
-                TraversalRules::correctErrantLineBreaks
+                TraversalRules::correctErrantLineBreaks,
+                TraversalRules::cleanArticleTag
             ))
             .applyRules(doc)
             .purgeMarkedNodes()
         cleanParaSpans()
         cleanUnderlines()
-
         elementToParagraph(doc, listOf("div", "span"))
 
         return CleanDocument(
@@ -45,21 +44,12 @@ class Cleaner(private val doc: Document) {
     }
 
     /**
-     * Remove all classes
+     * Remove all classes from body
      */
     private fun removeBodyClasses() {
         val body = doc.body()
         body.classNames().forEach {
             body.removeClass(it)
-        }
-    }
-
-    private fun cleanArticleTags() {
-        val articles = doc.getElementsByTag("article")
-        articles.forEach {
-            it.removeAttr("id")
-            it.removeAttr("name")
-            it.removeAttr("class")
         }
     }
 
@@ -211,20 +201,18 @@ class Cleaner(private val doc: Document) {
 class Traverse(val nodeRemovalRules: List<(Node) -> Boolean>, val nodeModificationRules: List<(Node) -> Unit>) {
     private val nodesToRemove = mutableSetOf<Node>()
     fun applyRules(node: Node): Traverse {
-        for (child in node.childNodes()) {
-            var nodeMarkedForRemoval = false
-            for (rule in nodeRemovalRules) {
-                if (rule(child)) {
-                    nodeMarkedForRemoval = true
-                    nodesToRemove += child
-                    break
-                }
-            }
-            if (nodeMarkedForRemoval) continue
+        for (rule in nodeModificationRules) {
+            rule(node)
+        }
 
-            for (rule in nodeModificationRules) {
-                rule(child)
+        for (rule in nodeRemovalRules) {
+            if (rule(node)) {
+                nodesToRemove += node
+                break
             }
+        }
+
+        for (child in node.childNodes()) {
             applyRules(child)
         }
         return this
@@ -277,6 +265,14 @@ object TraversalRules {
                 }
                 textNode.text(text)
             }
+        }
+    }
+
+    fun cleanArticleTag(node: Node) {
+        if (node is Element && node.tagName() == "article") {
+            node.removeAttr("id")
+            node.removeAttr("name")
+            node.removeAttr("class")
         }
     }
 }
