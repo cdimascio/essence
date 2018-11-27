@@ -10,23 +10,19 @@ class DocumentScorer(private val doc: Document, private val stopWords: StopWords
     private val heuristics = Heuristics(this, stopWords)
     private val filterByScorer = FilterScoredNodes(stopWords, heuristics)
 
-    private var count = 0
     fun score(): Element? {
         val nodesWithText = mutableListOf<Element>()
         val nodesToCheck = doc.select("p, pre, td")
-        println("nodesToCheck ${nodesToCheck.size}")
         nodesToCheck.forEach { node ->
             val text = node.text()
             val wordStats = stopWords.statistics(text)
             val hasHighLinkDensity = heuristics.hasHighLinkDensity(node)
 
-            println("${count++}==\t${wordStats.stopWords.size > 2 && !hasHighLinkDensity}\t${wordStats.stopWords.size}\t$hasHighLinkDensity\t${node.html().substring(0, Math.min(30, node.html().length))}")
             if (wordStats.stopWords.size > 2 && !hasHighLinkDensity) {
                 nodesWithText.add(node)
             }
         }
 
-        println("nodesWithText ${nodesWithText.size}")
         val numNodesWithText = nodesWithText.size
         var startingBoost = 1.0
         val negativeScoring = 0
@@ -57,12 +53,12 @@ class DocumentScorer(private val doc: Document, private val stopWords: StopWords
             // Give the current node a score of how many common words
             // it contains plus any boost
             val wordStats = stopWords.statistics(text)
-            val upscore = Math.floor(wordStats.stopWords.size + boostScore)
+            val upScore = Math.floor(wordStats.stopWords.size + boostScore)
 
             // THis only goes up 2 levels per node?
             // Propagate the score upwards
             val parent = node.parent()
-            updateScore(parent, upscore)
+            updateScore(parent, upScore)
             updateNodeCount(parent, 1)
 
             if (!parentNodes.contains(parent)) {
@@ -71,7 +67,7 @@ class DocumentScorer(private val doc: Document, private val stopWords: StopWords
             val grandParent: Node? = parent.parent()
 
             grandParent?.let {
-                updateScore(it, upscore / 2.0)
+                updateScore(it, upScore / 2.0)
                 updateNodeCount(it, 1)
                 if (!parentNodes.contains(grandParent)) {
                     if (grandParent is Element) {
@@ -201,7 +197,6 @@ class Heuristics(private val scorer: DocumentScorer, private val stopWords: Stop
                 val percentLinkWords = linkWords.size.toDouble() / words.size.toDouble()
                 val score = percentLinkWords * links.size
 
-                println("${linkWords.size} / ${words.size} = $percentLinkWords (percentLinkWords) |  $percentLinkWords * ${links.size} = $score (score)")
                 return score >= 1.0
             }
         }

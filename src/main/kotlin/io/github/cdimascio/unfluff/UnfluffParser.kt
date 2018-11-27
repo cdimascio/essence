@@ -12,7 +12,6 @@ class UnfluffParser(private val html: String, language: Language? = null) {
     private val formatter = Formatter(stopWords)
 
     fun parse(): UnfluffDocument {
-        println("---start 1 ${document.select("div").size}")
         val title = extractor.title()
         val softTitle = extractor.softTitle()
         val description = extractor.description()
@@ -26,10 +25,8 @@ class UnfluffParser(private val html: String, language: Language? = null) {
         val canonicalLink = extractor.canonicalLink()
         val keywords = extractor.keywords()
 
-        println("---start 2 ${document.select("div").size}")
         // clean and score document before extracting text, links and video
         cleaner.clean()
-        println("---start 3 ${document.select("div").size}")
         val topNode = scorer.score()
 
         val links = extractor.links(topNode)

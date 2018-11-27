@@ -6,8 +6,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.test.assertEquals
 
-// TODO some extractors return null, while others return empty string
-// clean this up - all should return null when missing
 class ExtractractorSpec {
     private val stopWords = StopWords.load(Language.en)
     @Test
@@ -209,7 +207,6 @@ class ExtractractorSpec {
         val html = """<html><head><meta property="og:image" content="null" /></head></html>"""
         val d = Jsoup.parse(html)
         val image = Extractor(d).image()
-        println(image)
         assertEquals("", image)
     }
 }

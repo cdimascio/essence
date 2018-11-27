@@ -39,11 +39,11 @@ fun Element.matchFirstElementTags(elementTags: List<String>, n: Int): Elements {
     val elements = Elements()
     var count = 0
     this.filter(object : NodeFilter {
-        override fun tail(node: Node?, depth: Int): NodeFilter.FilterResult {
+        override fun tail(node: Node, depth: Int): NodeFilter.FilterResult {
             return NodeFilter.FilterResult.CONTINUE
         }
 
-        override fun head(node: Node?, depth: Int): NodeFilter.FilterResult {
+        override fun head(node: Node, depth: Int): NodeFilter.FilterResult {
             if (node is Element && elementTags.contains(node.tagName())) {
                 elements.add(node)
                 count += 1
