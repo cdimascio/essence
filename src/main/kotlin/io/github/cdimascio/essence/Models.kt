@@ -1,4 +1,4 @@
-package io.github.cdimascio.unfluff
+package io.github.cdimascio.essence
 
 import org.jsoup.nodes.Document
 
@@ -7,7 +7,7 @@ data class CleanDocument(
     val doc: Document
 )
 
-data class UnfluffDocument(
+data class EssenceResult(
     val text: String?,
     val language: String?,
     val authors: List<String>,

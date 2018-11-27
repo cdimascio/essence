@@ -1,4 +1,4 @@
-package io.github.cdimascio.unfluff
+package io.github.cdimascio.essence.util
 
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node

@@ -1,5 +1,8 @@
-package io.github.cdimascio.unfluff
+package io.github.cdimascio.essence.scorers
 
+import io.github.cdimascio.essence.words.StopWords
+import io.github.cdimascio.essence.util.TraversalHelpers
+import io.github.cdimascio.essence.util.find
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node

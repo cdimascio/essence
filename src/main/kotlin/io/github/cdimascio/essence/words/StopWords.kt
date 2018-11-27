@@ -1,5 +1,7 @@
-package io.github.cdimascio.unfluff
+package io.github.cdimascio.essence.words
 
+import io.github.cdimascio.essence.Language
+import io.github.cdimascio.essence.StopWordsStatistics
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.stream.Collectors
@@ -15,10 +17,6 @@ class StopWords private constructor(private val stopWords: List<String>) {
         }
     }
 
-    fun stopwords(): List<String> {
-        return stopWords
-    }
-
     fun statistics(content: String): StopWordsStatistics {
         val cleanedContent = removePunctuation(content)
         val candidates = cleanedContent.split(" ").map{ it.toLowerCase() }
@@ -32,5 +30,4 @@ class StopWords private constructor(private val stopWords: List<String>) {
     private fun removePunctuation(content: String): String {
         return content.replace("""[\|\@\<\>\[\]\"\'\.,-\/#\?!$%\^&\*\+;:{}=\-_`~()]""".toRegex(), "")
     }
-
 }

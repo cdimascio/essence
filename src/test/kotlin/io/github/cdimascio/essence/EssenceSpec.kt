@@ -1,4 +1,4 @@
-package io.github.cdimascio.unfluff
+package io.github.cdimascio.essence
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -7,7 +7,7 @@ import org.junit.Assert.fail
 import org.junit.Ignore
 import org.junit.Test
 
-class UnfluffSpec {
+class EssenceSpec {
 
     @Test
     fun readsFavicon() {
@@ -193,7 +193,7 @@ class UnfluffSpec {
     fun checkFixture(site: String, fields: List<String>) {
         val html = readFileFull("./fixtures/test_$site.html")
         val orig = parseJson(readFileFull("./fixtures/test_$site.json"))
-        val data = Unfluff.parse(html, Language.en)
+        val data = Essence.extract(html, Language.en)
 
         val expected = orig["expected"]
         for (field in fields) {

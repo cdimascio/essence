@@ -1,6 +1,7 @@
-package io.github.cdimascio.unfluff
+package io.github.cdimascio.essence
 
 
+import io.github.cdimascio.essence.cleaners.Cleaner
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Node
 import org.junit.Assert.assertEquals

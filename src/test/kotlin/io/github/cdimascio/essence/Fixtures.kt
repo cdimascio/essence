@@ -1,4 +1,4 @@
-package io.github.cdimascio.unfluff
+package io.github.cdimascio.essence
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper

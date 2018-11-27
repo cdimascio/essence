@@ -1,6 +1,6 @@
-package io.github.cdimascio.unfluff
+package io.github.cdimascio.essence
 
-import org.junit.Ignore
+import io.github.cdimascio.essence.words.StopWords
 import org.junit.Test
 import kotlin.test.assertEquals
 

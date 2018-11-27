@@ -1,8 +1,13 @@
-package io.github.cdimascio.unfluff
+package io.github.cdimascio.essence
 
+import io.github.cdimascio.essence.cleaners.Cleaner
+import io.github.cdimascio.essence.extractors.Extractor
+import io.github.cdimascio.essence.formatters.Formatter
+import io.github.cdimascio.essence.scorers.DocumentScorer
+import io.github.cdimascio.essence.words.StopWords
 import org.jsoup.Jsoup
 
-class UnfluffParser(private val html: String, language: Language? = null) {
+class EssenceParser(private val html: String, language: Language? = null) {
     private val document = Jsoup.parse(this.html)
     private val cleaner = Cleaner(document)
     private val extractor = Extractor(document)
@@ -11,7 +16,7 @@ class UnfluffParser(private val html: String, language: Language? = null) {
     private val scorer = DocumentScorer(document, stopWords)
     private val formatter = Formatter(stopWords)
 
-    fun parse(): UnfluffDocument {
+    fun parse(): EssenceResult {
         val title = extractor.title()
         val softTitle = extractor.softTitle()
         val description = extractor.description()
@@ -33,7 +38,7 @@ class UnfluffParser(private val html: String, language: Language? = null) {
         val videos = extractor.videos(topNode)
         val text = extractor.text(topNode, formatter)
 
-        return UnfluffDocument(
+        return EssenceResult(
             authors = authors,
             title = title,
             softTitle = softTitle,

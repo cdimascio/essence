@@ -1,5 +1,8 @@
-package io.github.cdimascio.unfluff
+package io.github.cdimascio.essence.cleaners
 
+import io.github.cdimascio.essence.CleanDocument
+import io.github.cdimascio.essence.util.find
+import io.github.cdimascio.essence.util.matchFirstElementTags
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
