@@ -4,6 +4,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
+import org.jsoup.select.NodeFilter
 
 private val REGEX_BAD_TAGS = """^side$|combx|retweet|mediaarticlerelated|menucontainer|navbar|partner-gravity-ad|video-full-transcript|storytopbar-bucket|utility-bar|inline-share-tools|comment|PopularQuestions|contact|foot|footer|Footer|footnote|cnn_strycaptiontxt|cnn_html_slideshow|cnn_strylftcntnt|links|meta$|shoutbox|sponsor|tags|socialnetworking|socialNetworking|cnnStryHghLght|cnn_stryspcvbx|^inset$|pagetools|post-attributes|welcome_form|contentTools2|the_answers|communitypromo|runaroundLeft|subscribe|vcard|articleheadings|date|^print$|popup|author-dropdown|tools|socialtools|byline|konafilter|KonaFilter|breadcrumbs|^fn$|wp-caption-text|legende|ajoutVideo|timestamp|js_replies""".toRegex(RegexOption.IGNORE_CASE)
 private val REGEX_NAV = """["#.'-_]+nav[-_"']+""".toRegex(RegexOption.IGNORE_CASE)
@@ -18,21 +19,20 @@ class Cleaner(private val doc: Document) {
         removeScriptsStyles()
         Traverse(
             nodeRemovalRules = listOf(
-                TraversalRules::removeCommentsTravRule,
-                TraversalRules::removeBadTagsTravRule,
-                TraversalRules::removeNavigationElements,
-                (TraversalRules::removeMatching)("""^caption$""".toRegex()),
-                (TraversalRules::removeMatching)(""" google """.toRegex()),
-                (TraversalRules::removeMatching)("""^[^entry-]more.*$""".toRegex()),
-                (TraversalRules::removeMatching)("""[^-]facebook""".toRegex()),
-                (TraversalRules::removeMatching)("""facebook-broadcasting""".toRegex()),
-                (TraversalRules::removeMatching)("""[^-]twitter""".toRegex())),
+                Rule::removeCommentsTravRule,
+                Rule::removeBadTagsTravRule,
+                Rule::removeNavigationElements,
+                (Rule::removeMatching)("""^caption$""".toRegex()),
+                (Rule::removeMatching)(""" google """.toRegex()),
+                (Rule::removeMatching)("""^[^entry-]more.*$""".toRegex()),
+                (Rule::removeMatching)("""[^-]facebook""".toRegex()),
+                (Rule::removeMatching)("""facebook-broadcasting""".toRegex()),
+                (Rule::removeMatching)("""[^-]twitter""".toRegex())),
             nodeModificationRules = listOf(
-                TraversalRules::correctErrantLineBreaks,
-                TraversalRules::cleanArticleTag
+                Rule::correctErrantLineBreaks,
+                Rule::cleanArticleTag
             ))
             .applyRules(doc)
-            .purgeMarkedNodes()
         cleanParaSpans()
         cleanUnderlines()
         elementToParagraph(doc, listOf("div", "span"))
@@ -96,35 +96,26 @@ class Cleaner(private val doc: Document) {
         }
     }
 
-    var count = 0
-    var e = 0
     private fun elementToParagraph(doc: Document, tagNames: List<String>) {
         val elements = doc.select(tagNames.joinToString(","))
         val tags = listOf("a", "blockquote", "dl", "div", "img", "ol", "p", "pre", "table", "ul")
-        println("divsToPara ${elements.size}")
         for (element in elements) {
             val items = element.matchFirstElementTags(tags, 1)
             if (items.isEmpty()) {
-                println("${count++} '${element.html()}' ")
                 val html = element.html()
                 element.tagName("p")
                 element.html(html)
 
             } else {
                 val replaceNodes = getReplacementNodes(element)
-                println("replace nodes ${replaceNodes.size}")
                 val pReplacementElements = mutableListOf<Element>()
                 for (rNode in replaceNodes) {
                     if (rNode is TextNode && rNode.text().isNotEmpty()) {
-                        println("-" + e++)
                         pReplacementElements.add(Element("p").html(rNode.text()))
                     } else if (rNode is Element) {
                         if (rNode.html().isNotEmpty()) {
-                            println("-" + e++)
                             pReplacementElements.add(Element("p").html(rNode.html()))
                         }
-                    } else {
-                        println("ERROR - should not get here")
                     }
                 }
                 element.parent().insertChildren(element.siblingIndex(), pReplacementElements)
@@ -137,14 +128,12 @@ class Cleaner(private val doc: Document) {
         val children = div.childNodes()
         val nodesToReturn = mutableListOf<Node>()
         val nodesToRemove = mutableListOf<Node>()
-        // really replacement HTML
-        val replacmentText = mutableListOf<String>() // could be string buffer
+        val replacmentText = mutableListOf<String>() // TODO: could be string buffer
         val isGravityUsed = { e: Element -> e.attr(GRAVITY_USED_ALREADY) == "yes" }
         val setGravityUsed = { e: Element -> e.attr(GRAVITY_USED_ALREADY, "yes") }
         for (kid in children) {
             if (kid is Element && kid.tagName() == "p" && replacmentText.isNotEmpty()) {
                 val html = replacmentText.joinToString("")
-                println("p with replacement $html")
                 nodesToReturn.add(Element("p").html(html))
                 replacmentText.clear()
                 nodesToReturn.add(kid)
@@ -154,10 +143,8 @@ class Cleaner(private val doc: Document) {
                     .replace("""\t""", "")
                     .replace("""^\s+$""", "")
                 if (kidText.length > 1) {
-                    println("text with replace text")
                     var prevSibling = kid.previousSibling()
                     while (prevSibling is Element && prevSibling.tagName() == "a" && !isGravityUsed(prevSibling)) {
-                        println("prev sib handling")
                         val outerHtml = " ${prevSibling.outerHtml()} "
                         replacmentText.add(outerHtml)
                         nodesToRemove.add(prevSibling)
@@ -169,7 +156,6 @@ class Cleaner(private val doc: Document) {
 
                     var nextSibling = kid.nextSibling()
                     while (nextSibling is Element && nextSibling.tagName() == "a" && !isGravityUsed(nextSibling)) {
-                        println("next sib handling")
                         val outerHtml = " ${nextSibling.outerHtml()} "
                         replacmentText.add(outerHtml)
                         nodesToRemove.add(nextSibling)
@@ -183,7 +169,6 @@ class Cleaner(private val doc: Document) {
         }
 
         if (replacmentText.isNotEmpty()) {
-            println("finish replacement text")
             val html = replacmentText.joinToString("")
             nodesToReturn.add(Element("p").html(html))
             replacmentText.clear()
@@ -197,37 +182,34 @@ class Cleaner(private val doc: Document) {
     }
 }
 
-class Traverse(val nodeRemovalRules: List<(Node) -> Boolean>, val nodeModificationRules: List<(Node) -> Unit>) {
-    private val nodesToRemove = mutableSetOf<Node>()
+class Traverse(
+    private val nodeRemovalRules: List<(Node) -> Boolean>,
+    private val nodeModificationRules: List<(Node) -> Unit>) {
+
     fun applyRules(node: Node): Traverse {
-        for (rule in nodeModificationRules) {
-            rule(node)
-        }
-
-        for (rule in nodeRemovalRules) {
-            if (rule(node)) {
-                nodesToRemove += node
-                break
+        node.filter(object : NodeFilter {
+            override fun tail(node: Node, depth: Int): NodeFilter.FilterResult {
+                return NodeFilter.FilterResult.CONTINUE
             }
-        }
 
-        for (child in node.childNodes()) {
-            applyRules(child)
-        }
+            override fun head(node: Node, depth: Int): NodeFilter.FilterResult {
+                for (rule in nodeModificationRules) {
+                    rule(node)
+                }
+
+                for (rule in nodeRemovalRules) {
+                    if (rule(node)) {
+                        return NodeFilter.FilterResult.REMOVE
+                    }
+                }
+                return NodeFilter.FilterResult.CONTINUE
+            }
+        })
         return this
-    }
-
-    /**
-     * purge nodes marked for deletion
-     */
-    fun purgeMarkedNodes() {
-        nodesToRemove.forEach {
-            it.remove()
-        }
     }
 }
 
-object TraversalRules {
+object Rule {
     /**
      * Remove node if a comment nodes and return true, else return false
      */

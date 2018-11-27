@@ -18,7 +18,6 @@ class CleanerSpec {
         val cleaner = Cleaner(document)
         val cleaned = cleaner.clean().doc
 
-        println(cleaned.html())
         assertEquals("", cleaned.body().attr("class").trim())
     }
 
@@ -93,7 +92,6 @@ class CleanerSpec {
     fun replaceChildlessDivsWithPTags2() {
         val doc = Jsoup.parse("<html><body><div>text1</div><div>more text</div></body></html>")
         Cleaner(doc).clean()
-        println(doc.html())
         assertEquals(0, doc.select("div").size)
         assertEquals(2, doc.select("p").size)
         assertEquals("text1 more text", doc.select("p").text())
@@ -103,8 +101,6 @@ class CleanerSpec {
     fun replacesUTagsWithPlainText() {
         val doc = Jsoup.parse("<html><body><u>text1</u></body></html>")
         Cleaner(doc).clean()
-        println(doc.html())
-        println("====== ${doc.body().html()}")
         assertEquals(0, doc.select("u").size)
         assertEquals("text1", doc.body().html())
     }
@@ -143,7 +139,6 @@ class CleanerSpec {
         Cleaner(doc).clean()
 
         val pElements = doc.select("p")
-        println(pElements)
         val cleanedParaText = pElements[9].textNodes()[0].text()
         assertEquals("“This transaction would not only strengthen our global presence, but also demonstrate our commitment to diversify and expand our U.S. commercial portfolio with meaningful new therapies,” said Russell Cox, executive vice president and chief operating officer of Jazz Pharmaceuticals plc. “We look forward to ongoing discussions with the FDA as we continue our efforts toward submission of an NDA for defibrotide in the U.S. Patients in the U.S. with severe VOD have a critical unmet medical need, and we believe that defibrotide has the potential to become an important treatment option for these patients.”", cleanedParaText.trim())
     }
