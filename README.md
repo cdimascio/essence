@@ -21,8 +21,6 @@ import io.github.cdimascio.essence.Essence;
 
 String data = Essence.extract(html);
 System.out.println(data.getText());
-System.out.println(data.getPublisher());
-// ...
 ```
 
 **Kotlin**
@@ -30,9 +28,10 @@ System.out.println(data.getPublisher());
 ```Kotlin
 val data = Essence.extract(html)
 println(data.text)
-println(data.author)
 // ...
 ```
+
+See [Extracted data elements](Extracted-data-elements)
 
 ## Install
 
@@ -54,7 +53,6 @@ compile 'io.github.cdimascio:essence:0.10.11'
 ```
 
 ## Extracted data elements
-
 
 **essence** attempts to extract the following content:
 
