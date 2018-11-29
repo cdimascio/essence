@@ -12,6 +12,7 @@ Given an HTML document, **essence** automatically extracts the main text content
   <img src="https://raw.githubusercontent.com/cdimascio/essence/master/assets/essence.png" width="400px"/>
 </p>
 
+The essence web project lives [here](https://github.com/cdimascio/essence-web)
 
 _This library is heavily influenced by [node-unfluff](https://github.com/ageitgey/node-unfluff) and its [lineage](#credits)_
 
