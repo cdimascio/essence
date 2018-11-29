@@ -4,9 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <name>essence</name>
+  <description>Automatically extracts the main text content (and much more) from an HTML document</description>
+  <url>https://github.com/cdimascio/essence</url>
+
   <groupId>io.github.cdimascio</groupId>
   <artifactId>essence</artifactId>
-  <version>0.11.5</version>
+  <version>0.12.6</version>
 
   <licenses>
     <license>
@@ -53,6 +57,7 @@
 
     <maven.source.plugin>3.0.1</maven.source.plugin>
     <maven.javadoc.plugin>3.0.0</maven.javadoc.plugin>
+    <maven.assembly.plugin>3.1.0</maven.assembly.plugin>
     <dokka.version>0.9.15</dokka.version>
     <bintray.subject>cdimascio</bintray.subject>
     <bintray.repo>maven</bintray.repo>
@@ -211,6 +216,16 @@
         <version>4.3.0</version>
         <configuration>
           <repoToken>i3Bl4av26PMqZNekY8X3Jt7t6YhwFXKFu</repoToken>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>${maven.assembly.plugin}</version>
+        <configuration>
+          <descriptors>
+            <descriptor>src/assembly/descriptor.xml</descriptor>
+          </descriptors>
         </configuration>
       </plugin>
     </plugins>
