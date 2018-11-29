@@ -13,7 +13,7 @@ Given an HTML document, **essence** automatically extracts the main text content
 </p>
 
 
-_This library is heavily influenced by [node-unfluff](https://github.com/ageitgey/node-unfluff) and its [lineage](#credits)_
+_This library is heavily inspired by [node-unfluff](https://github.com/ageitgey/node-unfluff) and its [lineage](#credits)_
 
 ## Usage
 
@@ -44,7 +44,7 @@ See [Extracted data elements](#extracted-data-elements) for additional extracted
 <dependency>
   <groupId>io.github.cdimascio</groupId>
   <artifactId>essence</artifactId>
-  <version>0.10.11</version>
+  <version>0.12.6</version>
   <type>pom</type>
 </dependency>
 ```
@@ -52,7 +52,7 @@ See [Extracted data elements](#extracted-data-elements) for additional extracted
 **Gradle**
 
 ```groovy
-compile 'io.github.cdimascio:essence:0.10.11'
+compile 'io.github.cdimascio:essence:0.12.6'
 ```
 
 ## Extracted data elements
