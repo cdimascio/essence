@@ -9,7 +9,7 @@ Given an HTML document, **essence** automatically extracts the main text content
 [Try out the demo](https://essence.mybluemix.net/index.html) - _a simple webapp to demonstrate essence_
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/cdimascio/essence/master/assets/essence.png" width="450px"/>
+  <img src="https://raw.githubusercontent.com/cdimascio/essence/master/assets/essence.png" width="400px"/>
 </p>
 
 
