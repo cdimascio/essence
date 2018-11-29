@@ -41,10 +41,7 @@ object NodeHeuristics {
             if (words.isEmpty() && links.isNotEmpty()) {
                 return true
             } else if (links.isNotEmpty()) {
-                val linkText = links.map { it.text() }.joinToString(" ")
-                val linkWords = linkText.split(" ")
-
-                val percentLinkWords = linkWords.size.toDouble() / words.size.toDouble()
+                val percentLinkWords = links.size.toDouble() / words.size.toDouble()
                 val score = percentLinkWords * links.size
 
                 return score >= 1.0

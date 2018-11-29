@@ -88,6 +88,11 @@ class EssenceSpec {
     }
 
     @Test
+    fun getsCleanedTextCnn3() {
+        checkFixture(site = "cnn3", fields = listOf("cleaned_text", "description"))
+    }
+
+    @Test
     fun getsCleanedTextMSN() {
         checkFixture(site = "msn1", fields = listOf("cleaned_text"))
     }
