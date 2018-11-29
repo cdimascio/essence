@@ -12,8 +12,6 @@ Given an HTML document, **essence** automatically extracts the main text content
   <img src="https://raw.githubusercontent.com/cdimascio/essence/master/assets/essence.png" width="400px"/>
 </p>
 
-The essence web project lives [here](https://github.com/cdimascio/essence-web)
-
 _This library is heavily influenced by [node-unfluff](https://github.com/ageitgey/node-unfluff) and its [lineage](#credits)_
 
 ## Usage
@@ -61,6 +59,8 @@ compile 'io.github.cdimascio:essence:0.10.11'
 [Essence web](https://essence.mybluemix.net/index.html) is a simple web page that fetches content at a given url and passes the HTML to this essence library.
 
 ![](https://raw.githubusercontent.com/cdimascio/essence/master/assets/example.png)
+
+The essence web project lives [here](https://github.com/cdimascio/essence-web)
 
 ## Extracted data elements
 
