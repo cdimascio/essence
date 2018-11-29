@@ -1,10 +1,12 @@
 # essence
 
-![](https://travis-ci.org/cdimascio/unfluffer-j.svg?branch=master)![](https://camo.githubusercontent.com/208c24da54eea1ae12f8abed5dcc6b84b6ce8440/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d417061636865253230322e302d626c75652e737667)
+![](https://travis-ci.org/cdimascio/essence.svg?branch=master)![](https://camo.githubusercontent.com/208c24da54eea1ae12f8abed5dcc6b84b6ce8440/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d417061636865253230322e302d626c75652e737667)
 
 An automatic web page content extractor for _Kotlin_ and _Java_.
 
 Given an HTML document, **essence** automatically extracts the main text content (and much more).
+
+[Try out the demo](https://essence.mybluemix.net/index.html) - _a simple webapp to demonstrate essence_
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/cdimascio/essence/master/assets/essence.png" width="450px"/>
