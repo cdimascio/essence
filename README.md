@@ -30,7 +30,6 @@ System.out.println(data.getText());
 ```Kotlin
 val data = Essence.extract(html)
 println(data.text)
-// ...
 ```
 
 See [Extracted data elements](#extracted-data-elements) for additional extracted metadata.
