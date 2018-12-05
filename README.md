@@ -6,12 +6,11 @@ An automatic web page content extractor for _Kotlin_ and _Java_.
 
 Given an HTML document, **essence** automatically extracts the main text content (and much more).
 
-[Try out the demo](https://essence.mybluemix.net/index.html) - _a simple webapp to demonstrate essence_
+[Try out the demo](https://essence.mybluemix.net) - _a simple webapp to demonstrate essence_
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/cdimascio/essence/master/assets/essence.png" width="450px"/>
+  <img src="https://raw.githubusercontent.com/cdimascio/essence/master/assets/essence.png" width="400px"/>
 </p>
-
 
 _This library is heavily influenced by [node-unfluff](https://github.com/ageitgey/node-unfluff) and its [lineage](#credits)_
 
@@ -31,7 +30,6 @@ System.out.println(data.getText());
 ```Kotlin
 val data = Essence.extract(html)
 println(data.text)
-// ...
 ```
 
 See [Extracted data elements](#extracted-data-elements) for additional extracted metadata.
@@ -44,7 +42,7 @@ See [Extracted data elements](#extracted-data-elements) for additional extracted
 <dependency>
   <groupId>io.github.cdimascio</groupId>
   <artifactId>essence</artifactId>
-  <version>0.10.11</version>
+  <version>0.12.6</version>
   <type>pom</type>
 </dependency>
 ```
@@ -52,14 +50,16 @@ See [Extracted data elements](#extracted-data-elements) for additional extracted
 **Gradle**
 
 ```groovy
-compile 'io.github.cdimascio:essence:0.10.11'
+compile 'io.github.cdimascio:essence:0.12.6'
 ```
 
 ## Try the Essence web demo
 
-[Essence web](https://essence.mybluemix.net/index.html) is a simple web page that fetches content at a given url and passes the HTML to this essence library.
+[Essence web](https://essence.mybluemix.net) is a simple web page that fetches content at a given url and passes the HTML to this essence library.
 
 ![](https://raw.githubusercontent.com/cdimascio/essence/master/assets/example.png)
+
+The essence web project lives [here](https://github.com/cdimascio/essence-web)
 
 ## Extracted data elements
 
