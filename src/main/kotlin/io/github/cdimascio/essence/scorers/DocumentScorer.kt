@@ -101,31 +101,6 @@ class DocumentScorer(private val stopWords: StopWords) : Scorer {
         return topNode
     }
 
-//    internal fun getScore(node: Node): Double {
-//        return try {
-//            node.attr("gravityScore").toDouble()
-//        } catch (e: Exception) {
-//            0.0
-//        }
-//    }
-//
-//    // TODO: why update the DOM to track score - do seomething else
-//    private fun updateScore(node: Node, addToScore: Double) {
-//        val currentScore = getScore(node)
-//        val score = currentScore + addToScore
-//        node.attr("gravityScore", score.toString())
-//    }
-
-//    private fun updateNodeCount(node: Node, addToCount: Int) {
-//        val currentCount = try {
-//            node.attr("gravityNodes").toInt()
-//        } catch (e: Exception) {
-//            0
-//        }
-//        val count = currentCount + addToCount
-//        node.attr("gravityNodes", count.toString())
-//    }
-
     /**
      *  Given a text node, check all previous siblings.
      *  If the sibling node looks 'texty' and isn't too many
