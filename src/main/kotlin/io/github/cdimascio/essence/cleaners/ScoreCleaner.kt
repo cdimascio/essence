@@ -1,7 +1,7 @@
 package io.github.cdimascio.essence.cleaners
 
-import io.github.cdimascio.essence.util.NodeHeuristics
 import io.github.cdimascio.essence.scorers.ScoredElement
+import io.github.cdimascio.essence.util.NodeHeuristics
 import io.github.cdimascio.essence.util.TraversalHelpers
 import io.github.cdimascio.essence.util.find
 import io.github.cdimascio.essence.words.StopWords
@@ -17,7 +17,8 @@ class ScoreCleaner(private val stopWords: StopWords) {
             listOf("p", "a").contains(node.tagName())
         }
 
-        addSiblingsToTopNode(element)?.let { updatedElement ->
+        val topNode = skipNonTextualTopNodes(element)
+        addSiblingsToTopNode(topNode)?.let { updatedElement ->
             for (child in updatedElement.children()) {
                 if (!isParagraphOrAnchor(child)) {
                     if (NodeHeuristics.hasHighLinkDensity(child) ||
@@ -28,9 +29,24 @@ class ScoreCleaner(private val stopWords: StopWords) {
                         }
                     }
                 }
+//                else if (NodeHeuristics.hasFewWordsAndLowFewWordNeighbors(child, stopWords)) {
+//                    if (child.hasParent()) {
+//                        child.remove()
+//                    }
+//                }
             }
         }
-        return element
+        return topNode
+    }
+
+    private fun skipNonTextualTopNodes(targetNode: Element): Element? {
+        if (targetNode.ownText().isBlank() && targetNode.childNodeSize() == 1) {
+            val child = targetNode.childNodes()[0]
+            if (child is Element) {
+                return skipNonTextualTopNodes(child)
+            }
+        }
+        return targetNode
     }
 
     // Why add only previous siblings -- change name of function

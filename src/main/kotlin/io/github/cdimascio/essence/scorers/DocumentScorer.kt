@@ -21,7 +21,6 @@ class DocumentScorer(private val stopWords: StopWords) : Scorer {
                 nodesWithText.add(node)
             }
         }
-
         val numNodesWithText = nodesWithText.size
         var startingBoost = 1.0
         val negativeScoring = 0

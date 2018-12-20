@@ -8,7 +8,6 @@ private val REGEX_NAV = """(["#.'\-_]+|^)nav[\-_"']+""".toRegex(RegexOption.IGNO
 private val REGEX_SPONSORED = """sponsored|(["#.'\-_]+|^)ad[\-_"']+|adzone""".toRegex(RegexOption.IGNORE_CASE)
 
 object Rule {
-
     fun removeSponsoredContent(node: Node): Boolean {
         if (node !is Element) return false
         return REGEX_SPONSORED.containsMatchIn(node.attr("class")) ||
@@ -16,21 +15,23 @@ object Rule {
                 REGEX_SPONSORED.containsMatchIn(it.value ?: "")
             }.isNotEmpty()
     }
+
     fun removeCommentsTravRule(node: Node): Boolean {
         return node.nodeName() == "#comment"
     }
 
     fun removeNavigationElements(node: Node): Boolean {
         if (node !is Element) return false
-        return listOf("div", "li", "ul", "ol").contains(node.tagName()) && (
+        // remove checks for div nav
+        return listOf("li", "ul", "ol", "header", "span").contains(node.tagName()) && (
             REGEX_NAV.containsMatchIn(node.attr("class")) ||
                 REGEX_NAV.containsMatchIn(node.attr("id")))
     }
 
 
     fun removeBadTagsTravRule(node: Node) = REGEX_BAD_TAGS.containsMatchIn(node.attr("id")) ||
-            REGEX_BAD_TAGS.containsMatchIn(node.attr("class")) ||
-            REGEX_BAD_TAGS.containsMatchIn(node.attr("name"))
+        REGEX_BAD_TAGS.containsMatchIn(node.attr("class")) ||
+        REGEX_BAD_TAGS.containsMatchIn(node.attr("name"))
 
     fun removeMatching(re: Regex): (Node) -> Boolean {
         return { node: Node ->

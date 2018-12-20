@@ -11,27 +11,27 @@ class EssenceSpec {
 
     @Test
     fun readsFavicon() {
-        checkFixture(site = "aolNews" , fields = listOf("favicon"))
+        checkFixture(site = "aolNews", fields = listOf("favicon"))
     }
 
     @Test
     fun readsDescription() {
-        checkFixture("allnewlyrics1" , listOf("description"))
+        checkFixture("allnewlyrics1", listOf("description"))
     }
 
     @Test
     fun readsOpenGraphDescription() {
-        checkFixture("twitter" , listOf("description"))
+        checkFixture("twitter", listOf("description"))
     }
 
     @Test
     fun readsKeywords() {
-        checkFixture("allnewlyrics1" , listOf("keywords"))
+        checkFixture("allnewlyrics1", listOf("keywords"))
     }
 
     @Test
     fun readsLang() {
-        checkFixture("allnewlyrics1" , listOf("lang"))
+        checkFixture("allnewlyrics1", listOf("lang"))
     }
 
     @Test
@@ -145,6 +145,16 @@ class EssenceSpec {
         checkFixture(site = "cnet", fields = listOf("cleaned_text"))
     }
 
+//    @Test
+//    fun getsCleanedTextSch() {
+//        checkFixture(site = "sch1", fields = listOf("cleaned_text"))
+//    }
+
+    @Test
+    fun getsCleanedTextKeras() {
+        checkFixture(site = "keras", fields = listOf("cleaned_text"))
+    }
+
     @Test
     fun getsCleanedTextYahoo() {
         checkFixture(site = "yahoo", fields = listOf("cleaned_text"))
@@ -190,9 +200,7 @@ class EssenceSpec {
     }
 
     private fun cleanTestingTest(newText: String, originalText: String): String {
-        return newText.
-            replace("""\n\n""", " ").
-            replace("""\ \ """, " ")
+        return newText.replace("""\n\n""", " ").replace("""\ \ """, " ")
             .substring(0, Math.min(newText.length, originalText.length))
     }
 
@@ -215,9 +223,11 @@ class EssenceSpec {
                     val origText = cleanOrigText(expected["cleaned_text"].asText())
                     val newText = cleanTestingTest(data.text, origText)
                     assertNotEquals("text should not be null", "", newText)
-                    assertTrue(data.text.length >= origText.length)
+
                     println(origText)
                     println(newText)
+                    assertTrue(data.text.length >= origText.length)
+
                     assertEquals(origText, newText)
                 }
                 "link" -> {
@@ -228,7 +238,7 @@ class EssenceSpec {
                 }
                 "description" -> {
                     assertEquals(expected["meta_description"].asText(), data.description)
-                 }
+                }
                 "lang" -> {
                     assertEquals(expected["meta_lang"].asText(), data.language)
                 }
@@ -247,7 +257,8 @@ class EssenceSpec {
                 }
                 "links" -> {
                     val links = data.links.sortedBy { it.text }
-                    val expectedLinks = expected["links"]?.map { Link(it["href"].asText(), it["text"].asText()) } ?: emptyList()
+                    val expectedLinks = expected["links"]?.map { Link(it["href"].asText(), it["text"].asText()) }
+                        ?: emptyList()
                     links.zip(expectedLinks).forEach { (actual, expected) ->
                         assertEquals(expected.text, actual.text)
                         assertEquals(expected.href, actual.href)

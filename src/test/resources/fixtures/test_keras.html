@@ -1,0 +1,357 @@
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+  <link rel="canonical" href="http://keras.io/why-use-keras/">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Why use Keras - Keras Documentation</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Source+Sans+Pro:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Why use Keras";
+    var mkdocs_page_input_path = "why-use-keras.md";
+    var mkdocs_page_url = "/why-use-keras/";
+  </script>
+
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-61785484-1', 'keras.io');
+    ga('send', 'pageview');
+  </script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+<div class="wy-grid-for-nav">
+
+
+  <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <a href="">
+        <div class="keras-logo">
+          <img src="/img/keras-logo-small.jpg" class="keras-logo-img">
+          Keras Documentation
+        </div>
+      </a>
+
+      <div class="wy-side-nav-search">
+        <div role="search">
+          <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+            <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+          </form>
+        </div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+          </li>
+        </ul>
+        <ul class="current">
+          <li class="toctree-l1 current"><a class="reference internal current" href="./">Why use Keras</a>
+            <ul class="current">
+              <li class="toctree-l2"><a class="reference internal" href="#keras-prioritizes-developer-experience">Keras prioritizes developer experience</a>
+              </li>
+              <li class="toctree-l2"><a class="reference internal" href="#keras-has-broad-adoption-in-the-industry-and-the-research-community">Keras has broad adoption in the industry and the research community</a>
+              </li>
+              <li class="toctree-l2"><a class="reference internal" href="#keras-makes-it-easy-to-turn-models-into-products">Keras makes it easy to turn models into products</a>
+              </li>
+              <li class="toctree-l2"><a class="reference internal" href="#keras-supports-multiple-backend-engines-and-does-not-lock-you-into-one-ecosystem">Keras supports multiple backend engines and does not lock you into one ecosystem</a>
+              </li>
+              <li class="toctree-l2"><a class="reference internal" href="#keras-has-strong-multi-gpu-support-and-distributed-training-support">Keras has strong multi-GPU support and distributed training support</a>
+              </li>
+              <li class="toctree-l2"><a class="reference internal" href="#keras-development-is-backed-by-key-companies-in-the-deep-learning-ecosystem">Keras development is backed by key companies in the deep learning ecosystem</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <p class="caption"><span class="caption-text">Getting started</span></p>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../getting-started/sequential-model-guide/">Guide to the Sequential model</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../getting-started/functional-api-guide/">Guide to the Functional API</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../getting-started/faq/">FAQ</a>
+          </li>
+        </ul>
+        <p class="caption"><span class="caption-text">Models</span></p>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../models/about-keras-models/">About Keras models</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../models/sequential/">Sequential</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../models/model/">Model (functional API)</a>
+          </li>
+        </ul>
+        <p class="caption"><span class="caption-text">Layers</span></p>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../layers/about-keras-layers/">About Keras layers</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../layers/core/">Core Layers</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../layers/convolutional/">Convolutional Layers</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../layers/pooling/">Pooling Layers</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../layers/local/">Locally-connected Layers</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../layers/recurrent/">Recurrent Layers</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../layers/embeddings/">Embedding Layers</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../layers/merge/">Merge Layers</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../layers/advanced-activations/">Advanced Activations Layers</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../layers/normalization/">Normalization Layers</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../layers/noise/">Noise layers</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../layers/wrappers/">Layer wrappers</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../layers/writing-your-own-keras-layers/">Writing your own Keras layers</a>
+          </li>
+        </ul>
+        <p class="caption"><span class="caption-text">Preprocessing</span></p>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../preprocessing/sequence/">Sequence Preprocessing</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../preprocessing/text/">Text Preprocessing</a>
+          </li>
+          <li class="toctree-l1"><a class="reference internal" href="../preprocessing/image/">Image Preprocessing</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../losses/">Losses</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../metrics/">Metrics</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../optimizers/">Optimizers</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../activations/">Activations</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../callbacks/">Callbacks</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../datasets/">Datasets</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../applications/">Applications</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../backend/">Backend</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../initializers/">Initializers</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../regularizers/">Regularizers</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../constraints/">Constraints</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../visualization/">Visualization</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../scikit-learn-api/">Scikit-learn API</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../utils/">Utils</a>
+          </li>
+        </ul>
+        <ul>
+          <li class="toctree-l1"><a class="reference internal" href="../contributing/">Contributing</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+
+    <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+      <a href="..">Keras Documentation</a>
+    </nav>
+
+
+    <div class="wy-nav-content">
+      <div class="rst-content">
+        <div role="navigation" aria-label="breadcrumbs navigation">
+          <ul class="wy-breadcrumbs">
+            <li><a href="..">Docs</a> &raquo;</li>
+
+
+
+            <li>Why use Keras</li>
+            <li class="wy-breadcrumbs-aside">
+
+              <a href="http://github.com/keras-team/keras/edit/master/docs/why-use-keras.md"
+                 class="icon icon-github"> Edit on GitHub</a>
+
+            </li>
+          </ul>
+
+          <hr/>
+        </div>
+        <div role="main">
+          <div class="section">
+
+            <h1 id="why-use-keras">Why use Keras?</h1>
+            <p>There are countless deep learning frameworks available today. Why use Keras rather than any other? Here are some of the areas in which Keras compares favorably to existing alternatives.</p>
+            <hr />
+            <h2 id="keras-prioritizes-developer-experience">Keras prioritizes developer experience</h2>
+            <ul>
+              <li>Keras is an API designed for human beings, not machines. <a href="https://blog.keras.io/user-experience-design-for-apis.html">Keras follows best practices for reducing cognitive load</a>: it offers consistent &amp; simple APIs, it minimizes the number of user actions required for common use cases, and it provides clear and actionable feedback upon user error.</li>
+              <li>This makes Keras easy to learn and easy to use. As a Keras user, you are more productive, allowing you to try more ideas than your competition, faster -- which in turn <a href="https://www.quora.com/Why-has-Keras-been-so-successful-lately-at-Kaggle-competitions">helps you win machine learning competitions</a>.</li>
+              <li>This ease of use does not come at the cost of reduced flexibility: because Keras integrates with lower-level deep learning languages (in particular TensorFlow), it enables you to implement anything you could have built in the base language. In particular, as <code>tf.keras</code>, the Keras API integrates seamlessly with your TensorFlow workflows.</li>
+            </ul>
+            <hr />
+            <h2 id="keras-has-broad-adoption-in-the-industry-and-the-research-community">Keras has broad adoption in the industry and the research community</h2>
+            <p><a href='https://towardsdatascience.com/deep-learning-framework-power-scores-2018-23607ddf297a'>
+              <img style='width: 80%; margin-left: 10%;' src='https://s3.amazonaws.com/keras.io/img/dl_frameworks_power_scores.png'/>
+            </a>
+            <p style='font-style: italic; font-size: 10pt; text-align: center;'>
+              Deep learning frameworks ranking computed by Jeff Hale, based on 11 data sources across 7 categories
+              </i></p>
+            <p>With over 250,000 individual users as of mid-2018, Keras has stronger adoption in both the industry and the research community than any other deep learning framework except TensorFlow itself (and the Keras API is the official frontend of TensorFlow, via the <code>tf.keras</code> module).</p>
+            <p>You are already constantly interacting with features built with Keras -- it is in use at Netflix, Uber, Yelp, Instacart, Zocdoc, Square, and many others. It is especially popular among startups that place deep learning at the core of their products.</p>
+            <p>Keras is also a favorite among deep learning researchers, coming in #2 in terms of mentions in scientific papers uploaded to the preprint server <a href="https://arxiv.org/archive/cs">arXiv.org</a>. Keras has also been adopted by researchers at large scientific organizations, in particular CERN and NASA.</p>
+            <hr />
+            <h2 id="keras-makes-it-easy-to-turn-models-into-products">Keras makes it easy to turn models into products</h2>
+            <p>Your Keras models can be easily deployed across a greater range of platforms than any other deep learning framework:</p>
+            <ul>
+              <li>On iOS, via <a href="https://developer.apple.com/documentation/coreml">Apple’s CoreML</a> (Keras support officially provided by Apple). Here's <a href="https://www.pyimagesearch.com/2018/04/23/running-keras-models-on-ios-with-coreml/">a tutorial</a>.</li>
+              <li>On Android, via the TensorFlow Android runtime. Example: <a href="https://medium.com/@timanglade/how-hbos-silicon-valley-built-not-hotdog-with-mobile-tensorflow-keras-react-native-ef03260747f3">Not Hotdog app</a>.</li>
+              <li>In the browser, via GPU-accelerated JavaScript runtimes such as <a href="https://transcranial.github.io/keras-js/#/">Keras.js</a> and <a href="https://mil-tokyo.github.io/webdnn/">WebDNN</a>.</li>
+              <li>On Google Cloud, via <a href="https://www.tensorflow.org/serving/">TensorFlow-Serving</a>.</li>
+              <li><a href="https://blog.keras.io/building-a-simple-keras-deep-learning-rest-api.html">In a Python webapp backend (such as a Flask app)</a>.</li>
+              <li>On the JVM, via <a href="https://deeplearning4j.org/model-import-keras">DL4J model import provided by SkyMind</a>.</li>
+              <li>On Raspberry Pi.</li>
+            </ul>
+            <hr />
+            <h2 id="keras-supports-multiple-backend-engines-and-does-not-lock-you-into-one-ecosystem">Keras supports multiple backend engines and does not lock you into one ecosystem</h2>
+            <p>Your Keras models can be developed with a range of different <a href="https://keras.io/backend/">deep learning backends</a>. Importantly, any Keras model that only leverages built-in layers will be portable across all these backends: you can train a model with one backend, and load it with another (e.g. for deployment). Available backends include:</p>
+            <ul>
+              <li>The TensorFlow backend (from Google)</li>
+              <li>The CNTK backend (from Microsoft)</li>
+              <li>The Theano backend</li>
+            </ul>
+            <p>Amazon is also currently working on developing a MXNet backend for Keras.</p>
+            <p>As such, your Keras model can be trained on a number of different hardware platforms beyond CPUs:</p>
+            <ul>
+              <li><a href="https://developer.nvidia.com/deep-learning">NVIDIA GPUs</a></li>
+              <li><a href="https://cloud.google.com/tpu/">Google TPUs</a>, via the TensorFlow backend and Google Cloud</li>
+              <li>OpenCL-enabled GPUs, such as those from AMD, via <a href="https://github.com/plaidml/plaidml">the PlaidML Keras backend</a></li>
+            </ul>
+            <hr />
+            <h2 id="keras-has-strong-multi-gpu-support-and-distributed-training-support">Keras has strong multi-GPU support and distributed training support</h2>
+            <ul>
+              <li>Keras has <a href="/utils/#multi_gpu_model">built-in support for multi-GPU data parallelism</a></li>
+              <li><a href="https://github.com/uber/horovod">Horovod</a>, from Uber, has first-class support for Keras models</li>
+              <li>Keras models <a href="https://www.tensorflow.org/versions/master/api_docs/python/tf/keras/estimator/model_to_estimator">can be turned into TensorFlow Estimators</a> and trained on <a href="https://cloud.google.com/solutions/running-distributed-tensorflow-on-compute-engine">clusters of GPUs on Google Cloud</a></li>
+              <li>Keras can be run on Spark via <a href="https://github.com/cerndb/dist-keras">Dist-Keras</a> (from CERN) and <a href="https://github.com/maxpumperla/elephas">Elephas</a></li>
+            </ul>
+            <hr />
+            <h2 id="keras-development-is-backed-by-key-companies-in-the-deep-learning-ecosystem">Keras development is backed by key companies in the deep learning ecosystem</h2>
+            <p>Keras development is backed primarily by Google, and the Keras API comes packaged in TensorFlow as <code>tf.keras</code>. Additionally, Microsoft maintains the CNTK Keras backend. Amazon AWS is developing MXNet support. Other contributing companies include NVIDIA, Uber, and Apple (with CoreML).</p>
+            <p><img src='/img/google-logo.png' style='width:200px; margin-right:15px;'/>
+              <img src='/img/microsoft-logo.png' style='width:200px; margin-right:15px;'/>
+              <img src='/img/nvidia-logo.png' style='width:200px; margin-right:15px;'/>
+              <img src='/img/aws-logo.png' style='width:110px; margin-right:15px;'/></p>
+
+          </div>
+        </div>
+        <footer>
+
+          <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+
+            <a href="../getting-started/sequential-model-guide/" class="btn btn-neutral float-right" title="Guide to the Sequential model">Next <span class="icon icon-circle-arrow-right"></span></a>
+
+
+            <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+
+          </div>
+
+
+          <hr/>
+
+          <div role="contentinfo">
+            <!-- Copyright etc -->
+
+          </div>
+
+          Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+        </footer>
+
+      </div>
+    </div>
+
+  </section>
+
+</div>
+
+<div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+
+          <a href="http://github.com/keras-team/keras/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+
+
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+
+
+        <span style="margin-left: 15px"><a href="../getting-started/sequential-model-guide/" style="color: #fcfcfc">Next &raquo;</a></span>
+
+    </span>
+</div>
+<script>var base_url = '..';</script>
+<script src="../js/theme.js" defer></script>
+<script src="../search/main.js" defer></script>
+<script type="text/javascript" defer>
+  window.onload = function () {
+    SphinxRtdTheme.Navigation.enable(true);
+  };
+</script>
+
+</body>
+</html>

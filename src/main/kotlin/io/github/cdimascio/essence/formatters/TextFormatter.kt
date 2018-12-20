@@ -9,14 +9,29 @@ import org.jsoup.nodes.TextNode
 class TextFormatter(private val stopWords: StopWords) : Formatter {
 
     override fun format(node: Element?) = node?.let {
+        val bestRoot = drillDownToCruxElement(node)
         // TODO: Combine the following into a single pass
-        removeNegativescoresNodes(it)
-        linksToText(it)
-        addNewlineToBr(it)
-        replaceWithText(it)
-        removeFewwordsParagraphs(it)
-        convertToText(it)
+        removeNegativescoresNodes(bestRoot)
+        superSubScriptToText(bestRoot)
+        linksToText(bestRoot)
+        addNewlineToBr(bestRoot)
+        replaceWithText(bestRoot)
+        removeFewwordsParagraphs(bestRoot)
+        // TODO: find proper root
+        // look look at children. if one node, look at their children to see if there are many
+        // if there are many use that node as th root
+        convertToText(bestRoot)
     } ?: ""
+
+    private fun drillDownToCruxElement(node: Element): Element {
+        if (node.ownText().isBlank() && node.childNodeSize() == 1) {
+            val onlyChild = node.childNode(0)
+            if (onlyChild is Element) {
+                drillDownToCruxElement(onlyChild)
+            }
+        }
+        return node
+    }
 
     private fun removeNegativescoresNodes(node: Element) {
         val gravityElements = node.find("*[gravityScore]")
@@ -30,6 +45,18 @@ class TextFormatter(private val stopWords: StopWords) : Formatter {
             if (score < 0.0) {
                 it.remove()
             }
+        }
+    }
+
+    private fun superSubScriptToText(node: Element) {
+        try {
+            if (listOf("sub", "sup", "small").contains(node.tagName())) {
+                node.ownText().trim().toDouble()
+                if (node.hasParent()) {
+                    node.unwrap()
+                }
+            }
+        } catch (e: NumberFormatException) {
         }
     }
 
@@ -64,7 +91,8 @@ class TextFormatter(private val stopWords: StopWords) : Formatter {
             val numStopWords = stopWords.statistics(text).stopWords.size
             val hasObject = e.find("object").isNotEmpty()
             val hasEmbed = e.find("embed").isNotEmpty()
-            if ((tag != "br" || text != "\\r") && numStopWords < 3 && !hasObject && !hasEmbed) {
+            val isEndline = tag == "br" || text == "\\r"
+            if (!isEndline && numStopWords < 3 && !hasObject && !hasEmbed) {
                 if (e.parent() != null)
                     e.remove()
             } else {
@@ -93,6 +121,7 @@ class TextFormatter(private val stopWords: StopWords) : Formatter {
                 continue
             }
 
+            // TODO if hanging text is blank here, we should reset the text to empty
             if (hangingText.isNotBlank()) {
                 val text = cleanParagraphText(hangingText.toString())
                 texts.addAll(text.split("""\r?\n""".toRegex()))

@@ -20,6 +20,7 @@ class Cleaner(private val doc: Document) {
         removeScriptsStyles()
         Traverse(
             nodeRemovalRules = listOf(
+//                Rule::removeNonTextNodes,
                 Rule::removeCommentsTravRule,
                 Rule::removeBadTagsTravRule,
                 Rule::removeNavigationElements,
@@ -95,7 +96,7 @@ class Cleaner(private val doc: Document) {
     }
 
     private fun elementToParagraph(doc: Document, tagNames: List<String>) {
-        val elements = doc.select(tagNames.joinToString(","))
+        val elements = doc.select(tagNames.joinToString(",")) //\.reversed()
         val tags = listOf("a", "blockquote", "dl", "div", "img", "ol", "p", "pre", "table", "ul")
         for (element in elements) {
             val items = element.matchFirstElementTags(tags, 1)
@@ -108,12 +109,8 @@ class Cleaner(private val doc: Document) {
                 val replaceNodes = getReplacementNodes(element)
                 val pReplacementElements = mutableListOf<Element>()
                 for (rNode in replaceNodes) {
-                    if (rNode is TextNode && rNode.text().isNotEmpty()) {
-                        pReplacementElements.add(Element("p").html(rNode.text()))
-                    } else if (rNode is Element) {
-                        if (rNode.html().isNotEmpty()) {
-                            pReplacementElements.add(Element("p").html(rNode.html()))
-                        }
+                    if (rNode.html().isNotEmpty()) {
+                        pReplacementElements.add(Element("p").html(rNode.html()))
                     }
                 }
                 element.parent().insertChildren(element.siblingIndex(), pReplacementElements)
@@ -122,9 +119,9 @@ class Cleaner(private val doc: Document) {
         }
     }
 
-    private fun getReplacementNodes(div: Node): List<Node> {
+    private fun getReplacementNodes(div: Node): List<Element> {
         val children = div.childNodes()
-        val nodesToReturn = mutableListOf<Node>()
+        val nodesToReturn = mutableListOf<Element>()
         val nodesToRemove = mutableListOf<Node>()
         val replacmentText = mutableListOf<String>() // TODO: could be string buffer
         val isGravityUsed = { e: Element -> e.attr(GRAVITY_USED_ALREADY) == "yes" }
@@ -162,7 +159,9 @@ class Cleaner(private val doc: Document) {
                     }
                 }
             } else {
-                nodesToReturn.add(kid)
+                if (kid is Element) {
+                    nodesToReturn += kid
+                }
             }
         }
 
@@ -176,7 +175,10 @@ class Cleaner(private val doc: Document) {
             node.remove()
         }
 
-        return nodesToReturn
+        val isInteresting = { e: Element ->
+            !listOf("meta", "head").contains(e.tagName())
+        }
+        return nodesToReturn.filter { isInteresting(it) }
     }
 }
 
