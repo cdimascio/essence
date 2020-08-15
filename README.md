@@ -21,7 +21,7 @@ _This library is inspired by [node-unfluff](https://github.com/ageitgey/node-unf
 ```Java
 import io.github.cdimascio.essence.Essence;
 
-String data = Essence.extract(html);
+EssenceResult data = Essence.extract(html);
 System.out.println(data.getText());
 ```
 
