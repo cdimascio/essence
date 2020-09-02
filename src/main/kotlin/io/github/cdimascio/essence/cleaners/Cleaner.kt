@@ -9,7 +9,7 @@ import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
 import org.jsoup.select.NodeFilter
 
-const private val GRAVITY_USED_ALREADY = "grv-usedalready"
+private const val GRAVITY_USED_ALREADY = "grv-usedalready"
 
 class Cleaner(private val doc: Document) {
     fun clean(): Document {
