@@ -55,7 +55,7 @@ class ScoreCleaner(private val stopWords: StopWords) {
         if (targetNode == null) return null
 
         val previousSiblings = TraversalHelpers.getAllPreviousSiblings(targetNode)
-        previousSiblings.filter { it is Element }.forEach { sib: Node ->
+        previousSiblings.filterIsInstance<Element>().forEach { sib: Node ->
             val siblingContent = getSiblingsContent(sib as Element, baselineParagraphSiblingScore)
             for (content in siblingContent) {
                 if (content.isNotBlank()) {
