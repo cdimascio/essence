@@ -5,11 +5,11 @@ import io.github.cdimascio.essence.util.find
 import org.jsoup.nodes.Element
 
 internal object LinksExtractor {
-    fun extract(node: Element?): List<Link> {
+    fun extract(parentNode: Element?): List<Link> {
         val gatherLinks = { node: Element ->
-            node.find("a").fold(mutableListOf<Link>()) { links, node ->
-                val href = node.attr("href").cleanse()
-                val text = node.text().cleanse() // or html
+            node.find("a").fold(mutableListOf<Link>()) { links, childNode ->
+                val href = childNode.attr("href").cleanse()
+                val text = childNode.text().cleanse() // or html
                 if (href.isNotBlank() && text.isNotBlank()) {
                     links += Link(href, text)
                 }
@@ -17,7 +17,7 @@ internal object LinksExtractor {
             }
         }
 
-        return node?.let { gatherLinks(node) } ?: emptyList()
+        return parentNode?.let { gatherLinks(parentNode) } ?: emptyList()
     }
 }
 
