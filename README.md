@@ -1,4 +1,7 @@
 # essence
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ![](https://travis-ci.org/cdimascio/essence.svg?branch=master) [![Maven Central](https://img.shields.io/maven-central/v/io.github.cdimascio/essence.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.github.cdimascio%22%20AND%20a:%22essence%22) ![](https://camo.githubusercontent.com/208c24da54eea1ae12f8abed5dcc6b84b6ce8440/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d417061636865253230322e302d626c75652e737667)
 
@@ -93,3 +96,22 @@ The essence web project lives [here](https://github.com/cdimascio/essence-web)
 
 
 <a href="https://www.buymeacoffee.com/m97tA5c" target="_blank"><img src="https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://cleymax.fr/"><img src="https://avatars3.githubusercontent.com/u/24879740?v=4" width="100px;" alt=""/><br /><sub><b>Clément P.</b></sub></a><br /><a href="https://github.com/cdimascio/essence/commits?author=Cleymax" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
