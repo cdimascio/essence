@@ -11,9 +11,9 @@ object Rule {
     fun removeSponsoredContent(node: Node): Boolean {
         if (node !is Element) return false
         return REGEX_SPONSORED.containsMatchIn(node.attr("class")) ||
-            node.attributes().filter {
+            node.attributes().any {
                 REGEX_SPONSORED.containsMatchIn(it.value ?: "")
-            }.isNotEmpty()
+            }
     }
 
     fun removeCommentsTravRule(node: Node): Boolean {

@@ -55,7 +55,7 @@ object NodeHeuristics {
         if (node is Element) {
             val ownText = node.ownText()
             if (node.childNodeSize() == 0 && (ownText.isBlank() || stopWords.statistics(ownText).stopWords.size < 5)) {
-               val n = 2
+                val n = 2
                 if (hasFewWordPrevSiblings(node, n, stopWords) && hasFewWordNextSiblings(node, n, stopWords)) {
                     return true
                 }

@@ -6,6 +6,9 @@ import io.github.cdimascio.essence.words.StopWords
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
+import kotlin.math.abs
+import kotlin.math.floor
+import kotlin.math.pow
 
 class DocumentScorer(private val stopWords: StopWords) : Scorer {
 
@@ -24,7 +27,7 @@ class DocumentScorer(private val stopWords: StopWords) : Scorer {
         val numNodesWithText = nodesWithText.size
         var startingBoost = 1.0
         val negativeScoring = 0
-        val bottomNegativescoreNodes = numNodesWithText * 0.25
+        val bottomNegativeScoreNodes = numNodesWithText * 0.25
         val parentNodes = mutableSetOf<Element>()
 
         for ((index, node) in nodesWithText.iterator().withIndex()) {
@@ -35,10 +38,10 @@ class DocumentScorer(private val stopWords: StopWords) : Scorer {
                 boostScore = (1.0 / startingBoost) * 50
                 startingBoost += 1
             }
-            if (numNodesWithText > 15 && ((numNodesWithText - index) <= bottomNegativescoreNodes)) {
-                val booster = bottomNegativescoreNodes - (numNodesWithText - 1)
-                boostScore = -1.0 * Math.pow(booster, 2.0)
-                val negScore = Math.abs(boostScore) + negativeScoring
+            if (numNodesWithText > 15 && ((numNodesWithText - index) <= bottomNegativeScoreNodes)) {
+                val booster = bottomNegativeScoreNodes - (numNodesWithText - 1)
+                boostScore = -1.0 * booster.pow(2.0)
+                val negScore = abs(boostScore) + negativeScoring
 
                 if (negScore > 40) {
                     boostScore = 5.0
@@ -51,7 +54,7 @@ class DocumentScorer(private val stopWords: StopWords) : Scorer {
             // Give the current node a score of how many common words
             // it contains plus any boost
             val wordStats = stopWords.statistics(text)
-            val upScore = Math.floor(wordStats.stopWords.size + boostScore)
+            val upScore = floor(wordStats.stopWords.size + boostScore)
 
             // THis only goes up 2 levels per node?
             // Propagate the score upwards
