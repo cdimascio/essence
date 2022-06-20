@@ -50,7 +50,7 @@
 
 
   <properties>
-    <kotlin.version>1.3.0</kotlin.version>
+    <kotlin.version>1.6.0</kotlin.version>
     <main.class>io.github.cdimascio.Essence</main.class>
     <junit.version>4.12</junit.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
